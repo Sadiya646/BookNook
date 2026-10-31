@@ -4,107 +4,126 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* =================================
-   BOOKNOOK - FOREST GREEN THEME
-================================= */
+/* =========================================
+   BOOKNOOK - LIGHT THEME
+   Burgundy + Deep Navy + Cream
+========================================= */
 
 :root {
-  --primary: #15370D;
-  --primary-foreground: #ffffff;
+  color-scheme: light;
 
-  --secondary: #728E6D;
-  --secondary-foreground: #ffffff;
+  --background: #FAF7F1;
+  --foreground: #292A40;
 
-  --accent: #E5CD82;
-  --accent-light: #FFF2B4;
+  --card: #FFFFFF;
+  --card-foreground: #292A40;
 
-  --background: #FFFDF5;
-  --foreground: #1c281a;
+  --popover: #FFFFFF;
+  --popover-foreground: #292A40;
 
-  --card: #ffffff;
-  --card-foreground: #1c281a;
+  --primary: #A83238;
+  --primary-foreground: #FFFFFF;
 
-  --popover: #ffffff;
-  --popover-foreground: #1c281a;
+  --secondary: #292A40;
+  --secondary-foreground: #FFFFFF;
 
-  --muted: #f3f5ec;
-  --muted-foreground: #728E6D;
+  --muted: #F3EEE5;
+  --muted-foreground: #777783;
 
-  --border: #dce5d6;
-  --input: #dce5d6;
-  --ring: #728E6D;
+  --accent: #F3E5E2;
+  --accent-foreground: #85272D;
 
-  --destructive: #dc2626;
+  --destructive: #DC2626;
 
-  --chart-1: #15370D;
-  --chart-2: #728E6D;
-  --chart-3: #E5CD82;
-  --chart-4: #a6bd91;
-  --chart-5: #FFF2B4;
+  --border: #E7DED5;
+  --input: #E7DED5;
+  --ring: #A83238;
+
+  --chart-1: #A83238;
+  --chart-2: #292A40;
+  --chart-3: #C77B7E;
+  --chart-4: #D8B8AE;
+  --chart-5: #777783;
 
   --radius: 0.75rem;
 
-  --transition-speed: 0.25s;
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #292A40;
+  --sidebar-primary: #A83238;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #F3E5E2;
+  --sidebar-accent-foreground: #85272D;
+  --sidebar-border: #E7DED5;
+  --sidebar-ring: #A83238;
 
-  --sidebar: #ffffff;
-  --sidebar-foreground: #1c281a;
-  --sidebar-primary: #15370D;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #FFF2B4;
-  --sidebar-accent-foreground: #15370D;
-  --sidebar-border: #dce5d6;
-  --sidebar-ring: #728E6D;
+  --transition-speed: 0.25s;
 }
 
-/* =================================
-   DARK MODE
-================================= */
+/* =========================================
+   BOOKNOOK - PREMIUM DARK THEME
+   Midnight Navy + Wine Burgundy
+========================================= */
 
 .dark {
-  --primary: #a6bd91;
-  --primary-foreground: #15370D;
+  color-scheme: dark;
 
-  --secondary: #728E6D;
-  --secondary-foreground: #ffffff;
+  /* Background */
+  --background: #15151F;
+  --foreground: #F5F0EA;
 
-  --accent: #E5CD82;
-  --accent-light: #3b3b25;
+  /* Cards */
+  --card: #20202D;
+  --card-foreground: #F5F0EA;
 
-  --background: #111a10;
-  --foreground: #f4f5e9;
+  /* Popover */
+  --popover: #252533;
+  --popover-foreground: #F5F0EA;
 
-  --card: #1c281a;
-  --card-foreground: #f4f5e9;
+  /* Primary Burgundy */
+  --primary: #C65B65;
+  --primary-foreground: #FFFFFF;
 
-  --popover: #1c281a;
-  --popover-foreground: #f4f5e9;
+  /* Secondary Navy */
+  --secondary: #303044;
+  --secondary-foreground: #F5F0EA;
 
-  --muted: #263524;
-  --muted-foreground: #a5b69a;
+  /* Muted */
+  --muted: #292938;
+  --muted-foreground: #AAA8B6;
 
-  --border: #354632;
-  --input: #354632;
-  --ring: #728E6D;
+  /* Accent */
+  --accent: #3B2933;
+  --accent-foreground: #F0A1A6;
 
-  --chart-1: #a6bd91;
-  --chart-2: #728E6D;
-  --chart-3: #E5CD82;
-  --chart-4: #FFF2B4;
-  --chart-5: #54724d;
+  /* Border & Input */
+  --border: #393847;
+  --input: #393847;
+  --ring: #C65B65;
 
-  --sidebar: #1c281a;
-  --sidebar-foreground: #f4f5e9;
-  --sidebar-primary: #a6bd91;
-  --sidebar-primary-foreground: #15370D;
-  --sidebar-accent: #263524;
-  --sidebar-accent-foreground: #E5CD82;
-  --sidebar-border: #354632;
-  --sidebar-ring: #728E6D;
+  /* Destructive */
+  --destructive: #EF646A;
+
+  /* Charts */
+  --chart-1: #C65B65;
+  --chart-2: #8D687A;
+  --chart-3: #D6A3A0;
+  --chart-4: #77758F;
+  --chart-5: #A83238;
+
+  /* Sidebar */
+  --sidebar: #1D1D29;
+  --sidebar-foreground: #F5F0EA;
+  --sidebar-primary: #C65B65;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #3B2933;
+  --sidebar-accent-foreground: #F0A1A6;
+  --sidebar-border: #393847;
+  --sidebar-ring: #C65B65;
 }
 
-/* =================================
+/* =========================================
    TAILWIND THEME VARIABLES
-================================= */
+========================================= */
 
 @theme inline {
   --color-background: var(--background);
@@ -116,11 +135,11 @@
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
 
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--primary);
-
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
 
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
@@ -149,9 +168,9 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-/* =================================
+/* =========================================
    BASE STYLES
-================================= */
+========================================= */
 
 * {
   border-color: var(--border);
@@ -165,17 +184,10 @@ body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+
   transition:
     background-color var(--transition-speed) ease,
     color var(--transition-speed) ease;
-}
-
-button,
-a,
-input,
-textarea,
-select {
-  transition: all var(--transition-speed) ease;
 }
 
 button {
@@ -184,15 +196,16 @@ button {
 
 ::selection {
   background-color: var(--accent);
-  color: var(--primary);
+  color: var(--accent-foreground);
 }
 
-/* =================================
+/* =========================================
    SCROLLBAR
-================================= */
+========================================= */
 
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -200,255 +213,21 @@ button {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--secondary);
+  background: var(--primary);
   border-radius: 20px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--primary);
+  background: #85272D;
 }
 
-/* =================================
-   NAVBAR
-================================= */
-
-.navbar {
-  background: var(--background);
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  backdrop-filter: blur(12px);
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #E07880;
 }
 
-.nav-link {
-  color: var(--foreground);
-  font-weight: 500;
-  position: relative;
-  padding: 8px 12px;
-  border-radius: 6px;
-}
-
-.nav-link:hover {
-  color: var(--primary);
-  background-color: var(--accent-light);
-}
-
-.dark .nav-link:hover {
-  background-color: var(--muted);
-}
-
-.nav-link.active {
-  color: var(--primary);
-  font-weight: 700;
-  border-bottom: 2px solid var(--accent);
-}
-
-.logo-accent {
-  color: var(--accent);
-}
-
-/* =================================
-   BUTTONS
-================================= */
-
-.btn-register {
-  background-color: var(--primary);
-  color: #ffffff;
-  padding: 10px 22px;
-  border-radius: 8px;
-  font-weight: 600;
-  border: 1px solid var(--primary);
-}
-
-.btn-register:hover {
-  background-color: var(--secondary);
-  border-color: var(--secondary);
-  transform: translateY(-2px);
-}
-
-.btn-add-book {
-  color: var(--primary);
-  border: 2px solid var(--primary);
-  background-color: transparent;
-  padding: 9px 20px;
-  border-radius: 8px;
-  font-weight: 600;
-}
-
-.btn-add-book:hover {
-  background-color: var(--accent-light);
-  border-color: var(--primary);
-}
-
-.btn-primary {
-  background-color: var(--primary);
-  color: #ffffff;
-  padding: 10px 22px;
-  border-radius: 8px;
-  font-weight: 600;
-}
-
-.btn-primary:hover {
-  background-color: var(--secondary);
-  transform: translateY(-2px);
-}
-
-.btn-accent {
-  background-color: var(--accent);
-  color: var(--primary);
-  padding: 10px 22px;
-  border-radius: 8px;
-  font-weight: 600;
-}
-
-.btn-accent:hover {
-  background-color: var(--accent-light);
-}
-
-/* =================================
-   LOGIN BUTTON
-================================= */
-
-.user-profile {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 9px 18px;
-  border: 1.5px solid var(--primary);
-  border-radius: 8px;
-  color: var(--primary);
-  font-weight: 600;
-}
-
-.user-profile:hover {
-  background-color: var(--primary);
-  color: #ffffff;
-}
-
-/* =================================
-   CARDS
-================================= */
-
-.book-card {
-  background-color: var(--card);
-  color: var(--card-foreground);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  overflow: hidden;
-  transition: all var(--transition-speed) ease;
-}
-
-.book-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(21, 55, 13, 0.12);
-  border-color: var(--secondary);
-}
-
-/* =================================
-   BADGES
-================================= */
-
-.badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 12px;
-  border-radius: 20px;
-  background-color: var(--accent-light);
-  color: var(--primary);
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.badge-green {
-  background-color: #e4efdf;
-  color: var(--primary);
-}
-
-.badge-gold {
-  background-color: var(--accent-light);
-  color: var(--primary);
-}
-
-/* =================================
-   INPUTS & FORMS
-================================= */
-
-input,
-textarea,
-select {
-  background-color: var(--card);
-  color: var(--foreground);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-}
-
-input:focus,
-textarea:focus,
-select:focus {
-  outline: none;
-  border-color: var(--secondary);
-  box-shadow: 0 0 0 3px rgba(114, 142, 109, 0.2);
-}
-
-input::placeholder,
-textarea::placeholder {
-  color: var(--muted-foreground);
-}
-
-/* =================================
-   SECTION
-================================= */
-
-.section-title {
-  color: var(--primary);
-  font-weight: 700;
-}
-
-.section-subtitle {
-  color: var(--muted-foreground);
-}
-
-/* =================================
-   HERO SECTION
-================================= */
-
-.hero-section {
-  background: linear-gradient(
-    135deg,
-    var(--primary),
-    var(--secondary)
-  );
-  color: #ffffff;
-}
-
-.hero-section h1 {
-  color: #ffffff;
-}
-
-.hero-section p {
-  color: #edf3e8;
-}
-
-.hero-highlight {
-  color: var(--accent);
-}
-
-/* =================================
-   DIVIDERS
-================================= */
-
-hr {
-  border-color: var(--border);
-}
-
-/* =================================
-   LINKS
-================================= */
-
-a {
-  text-decoration: none;
-}
+/* =========================================
+   COMMON UTILITIES
+========================================= */
 
 .text-brand {
   color: var(--primary);
@@ -458,32 +237,242 @@ a {
   color: var(--muted-foreground);
 }
 
-/* =================================
+/* =========================================
+   NAVBAR
+========================================= */
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+
+  background: color-mix(in srgb, var(--background) 90%, transparent);
+  backdrop-filter: blur(14px);
+
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-link {
+  position: relative;
+  padding: 8px 12px;
+  border-radius: 8px;
+
+  color: var(--foreground);
+  font-weight: 500;
+
+  transition: all var(--transition-speed) ease;
+}
+
+.nav-link:hover {
+  color: var(--primary);
+  background: var(--accent);
+}
+
+.nav-link.active {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+/* =========================================
+   BUTTONS
+========================================= */
+
+.btn-register,
+.btn-primary {
+  background: var(--primary);
+  color: var(--primary-foreground);
+
+  padding: 10px 22px;
+  border-radius: 9px;
+  font-weight: 600;
+
+  transition: all var(--transition-speed) ease;
+}
+
+.btn-register:hover,
+.btn-primary:hover {
+  filter: brightness(0.9);
+  transform: translateY(-2px);
+}
+
+.btn-add-book {
+  color: var(--primary);
+  border: 1.5px solid var(--primary);
+  background: transparent;
+
+  padding: 9px 20px;
+  border-radius: 9px;
+  font-weight: 600;
+
+  transition: all var(--transition-speed) ease;
+}
+
+.btn-add-book:hover {
+  background: var(--accent);
+}
+
+/* =========================================
+   CARDS
+========================================= */
+
+.book-card {
+  background: var(--card);
+  color: var(--card-foreground);
+
+  border: 1px solid var(--border);
+  border-radius: 14px;
+
+  overflow: hidden;
+
+  transition: all var(--transition-speed) ease;
+}
+
+.book-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--primary);
+
+  box-shadow: 0 12px 28px rgba(40, 30, 40, 0.09);
+}
+
+.dark .book-card:hover {
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+}
+
+/* =========================================
+   BADGES
+========================================= */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 5px 12px;
+  border-radius: 20px;
+
+  background: var(--accent);
+  color: var(--accent-foreground);
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* =========================================
+   FORM FOCUS
+========================================= */
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+  border-color: var(--ring);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 25%, transparent);
+}
+
+/* =========================================
+   HERO SECTION
+========================================= */
+
+.hero-section {
+  background: linear-gradient(
+    135deg,
+    var(--secondary),
+    var(--primary)
+  );
+
+  color: #FFFFFF;
+}
+
+.hero-section h1 {
+  color: #FFFFFF;
+}
+
+.hero-section p {
+  color: #F5E9E8;
+}
+
+.hero-highlight {
+  color: #F0A1A6;
+}
+
+/* =========================================
+   SECTION
+========================================= */
+
+.section-title {
+  color: var(--foreground);
+  font-weight: 700;
+}
+
+.section-subtitle {
+  color: var(--muted-foreground);
+}
+
+/* =========================================
+   LINKS & DIVIDERS
+========================================= */
+
+a {
+  text-decoration: none;
+}
+
+hr {
+  border-color: var(--border);
+}
+
+/* =========================================
    FOOTER
-================================= */
+========================================= */
 
 .footer {
-  background-color: var(--primary);
-  color: #ffffff;
+  background: var(--secondary);
+  color: #FFFFFF;
 }
 
 .footer a {
-  color: var(--accent-light);
+  color: #F0A1A6;
+  transition: color var(--transition-speed) ease;
 }
 
 .footer a:hover {
-  color: var(--accent);
+  color: #FFFFFF;
 }
 
-/* =================================
+/* =========================================
+   DARK MODE EXTRA STYLING
+========================================= */
+
+.dark body {
+  background: #15151F;
+  color: #F5F0EA;
+}
+
+.dark .navbar {
+  background: rgba(21, 21, 31, 0.88);
+}
+
+.dark .book-card {
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.15);
+}
+
+.dark .book-card:hover {
+  border-color: #C65B65;
+}
+
+.dark ::selection {
+  background: #713940;
+  color: #FFFFFF;
+}
+
+/* =========================================
    ANIMATIONS
-================================= */
+========================================= */
 
 @keyframes fadeIn {
   from {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -494,9 +483,9 @@ a {
   animation: fadeIn 0.5s ease forwards;
 }
 
-/* =================================
+/* =========================================
    RESPONSIVE
-================================= */
+========================================= */
 
 @media (max-width: 768px) {
   .nav-link {
@@ -504,14 +493,17 @@ a {
     padding: 10px 12px;
   }
 
-  .btn-register,
-  .btn-add-book,
-  .btn-primary {
-    width: 100%;
-    text-align: center;
-  }
-
   .book-card:hover {
     transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }
