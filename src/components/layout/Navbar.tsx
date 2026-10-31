@@ -29,6 +29,18 @@ import {
 const publicLinks = [
   { href: "/", label: "Home", icon: Home },
   { href: "/books", label: "Books", icon: Library },
+  {
+    href: "/all-books",label: "All Books", icon:"All Books"
+  },
+   {
+    href: "/add-book",label: "Add Book", icon:"Add Book"
+  },
+   {
+    href: "/my-book",label: "My Books", icon:"My Books"
+  },
+   {
+    href: "/my-borrows",label: "My Borrows", icon:"My Borrows"
+  }
 ];
 
 const privateLinks = [
