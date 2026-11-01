@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ArrowLeft, CalendarDays, Mail, User } from "lucide-react";
+import { ArrowLeft, CalendarDays, Mail, User, BookOpen, Layers, Hash } from "lucide-react";
 
 import type { Book } from "../../../types";
 import PrivateRoute from "@/components/ui/PrivateRoute";
@@ -49,88 +49,114 @@ export default async function BookDetailsPage({ params }: Props) {
 
   return (
     <PrivateRoute>
-      <div className="mx-auto max-w-5xl px-6 py-12">
+      <div className="mx-auto max-w-6xl px-6 py-12">
+        
+        {/* Back Link */}
         <Link
           href="/books"
-          className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:underline"
+          className="group mb-8 inline-flex items-center gap-2.5 text-xs font-bold uppercase tracking-wider text-[#274D60] transition-colors hover:text-[#0C969C] dark:text-[#6BA3BE]"
         >
-          <ArrowLeft className="size-4" />
+          <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-1" />
           Back to All Books
         </Link>
 
-        <div className="grid gap-10 rounded-2xl bg-white p-6 shadow-lg md:grid-cols-2">
-          {/* Cover Image */}
-          <div className="flex items-center justify-center overflow-hidden rounded-xl bg-gray-100 p-6">
+        <div className="grid gap-12 rounded-3xl border border-[#0C969C]/25 bg-[#F4F8F8] p-8 shadow-2xl backdrop-blur-xl dark:border-[#274D60]/50 dark:bg-[#032F30] md:grid-cols-2 md:p-12">
+          
+          {/* Cover Image Container */}
+          <div className="relative flex items-center justify-center overflow-hidden rounded-2xl border border-[#0C969C]/20 bg-white/60 p-8 shadow-inner backdrop-blur-md dark:border-[#274D60] dark:bg-[#031716]/60">
             {book.imageUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={book.imageUrl}
                 alt={book.title}
-                className="max-h-96 w-full object-contain"
+                className="max-h-[420px] w-full rounded-xl object-contain drop-shadow-xl transition-transform duration-500 hover:scale-105"
               />
             ) : (
-              <div className="flex aspect-3/4 w-full items-center justify-center bg-blue-50 p-8 text-center font-heading text-2xl text-blue-600">
+              <div className="flex aspect-3/4 w-full items-center justify-center rounded-xl bg-gradient-to-br from-[#0C969C]/10 to-[#032F30]/20 p-8 text-center font-heading text-3xl font-black text-[#0C969C]">
                 {book.title}
               </div>
             )}
           </div>
 
-          {/* Book Info */}
+          {/* Book Info Container */}
           <div className="flex flex-col justify-center space-y-6">
-            <div className="space-y-3">
-              <span className="inline-block rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600">
+            <div className="space-y-4">
+              
+              {/* Category Badge */}
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-[#0C969C]/30 bg-[#0C969C]/10 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-[#0A7075] dark:border-[#6BA3BE]/30 dark:bg-[#031716]/50 dark:text-[#6BA3BE]">
+                <Layers className="size-3.5" />
                 {book.category}
               </span>
 
-              <h1 className="text-3xl font-bold text-gray-900 md:text-4xl">
+              {/* Title */}
+              <h1 className="text-3xl font-black tracking-tight text-[#031716] md:text-4xl dark:text-[#F4F8F8]">
                 {book.title}
               </h1>
 
-              <p className="text-lg text-gray-600">By {book.author}</p>
+              {/* Author */}
+              <p className="text-lg font-semibold text-[#274D60] dark:text-[#6BA3BE]">
+                By <span className="text-[#031716] dark:text-[#F4F8F8]">{book.author}</span>
+              </p>
             </div>
 
-            <p className="leading-7 text-gray-700">{book.description}</p>
+            {/* Description */}
+            <p className="leading-relaxed text-[#274D60] dark:text-[#6BA3BE]/90 text-sm md:text-base">
+              {book.description}
+            </p>
 
-            {/* Added by info */}
-            <div className="rounded-xl border bg-gray-50 p-4">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
-                Added by
+            {/* Added by info box */}
+            <div className="rounded-2xl border border-[#0C969C]/20 bg-white/70 p-5 backdrop-blur-sm dark:border-[#274D60] dark:bg-[#031716]/60">
+              <p className="mb-3 text-xs font-bold uppercase tracking-widest text-[#0C969C]">
+                Contributor Details
               </p>
-              <ul className="space-y-2 text-sm text-gray-700">
-                <li className="flex items-center gap-2">
-                  <User className="size-4 text-blue-600" />
-                  <span className="font-medium">{book.userName}</span>
+              <ul className="space-y-2.5 text-sm font-medium text-[#274D60] dark:text-[#6BA3BE]">
+                <li className="flex items-center gap-3">
+                  <User className="size-4 text-[#0C969C]" />
+                  <span className="text-[#031716] dark:text-[#F4F8F8]">{book.userName}</span>
                 </li>
-                <li className="flex items-center gap-2">
-                  <Mail className="size-4 text-blue-600" />
+                <li className="flex items-center gap-3">
+                  <Mail className="size-4 text-[#0C969C]" />
                   <span>{book.userEmail}</span>
                 </li>
                 {book.createdAt && (
-                  <li className="flex items-center gap-2">
-                    <CalendarDays className="size-4 text-blue-600" />
+                  <li className="flex items-center gap-3">
+                    <CalendarDays className="size-4 text-[#0C969C]" />
                     <span>{formatDate(book.createdAt)}</span>
                   </li>
                 )}
               </ul>
             </div>
 
-            {/* Copies Info */}
-            <div className="space-y-1 text-sm text-gray-700">
-              <p>
-                <strong>Total Copies:</strong> {book.totalCopies}
-              </p>
-              <p>
-                <strong>Available Copies:</strong>{" "}
-                <span className={soldOut ? "font-bold text-red-600" : "font-bold text-blue-600"}>
-                  {book.copies}
-                </span>
-              </p>
+            {/* Copies Info Grid */}
+            <div className="grid grid-cols-2 gap-4 rounded-2xl border border-[#0C969C]/20 bg-[#032F30]/5 p-4 dark:border-[#274D60] dark:bg-[#032F30]/40">
+              <div className="flex items-center gap-3">
+                <div className="flex size-10 items-center justify-center rounded-xl bg-[#0C969C]/10 text-[#0C969C]">
+                  <BookOpen className="size-5" />
+                </div>
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-[#274D60] dark:text-[#6BA3BE]">Total Copies</p>
+                  <p className="text-lg font-black text-[#031716] dark:text-[#F4F8F8]">{book.totalCopies}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="flex size-10 items-center justify-center rounded-xl bg-[#0C969C]/10 text-[#0C969C]">
+                  <Hash className="size-5" />
+                </div>
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-[#274D60] dark:text-[#6BA3BE]">Available</p>
+                  <p className={`text-lg font-black ${soldOut ? "text-red-500" : "text-[#0C969C]"}`}>
+                    {book.copies}
+                  </p>
+                </div>
+              </div>
             </div>
 
             {/* Borrow Button Component */}
             <div className="pt-2">
               <BorrowButton book={book} />
             </div>
+
           </div>
         </div>
       </div>
