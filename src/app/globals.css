@@ -1,124 +1,121 @@
-
 @import "tailwindcss";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
 /* =========================================
-   BOOKNOOK - LIGHT THEME
-   Burgundy + Deep Navy + Cream
+   BOOKNOOK - LIGHT THEME (New Custom Palette)
 ========================================= */
 
 :root {
   color-scheme: light;
 
-  --background: #FAF7F1;
-  --foreground: #292A40;
+  --background: #F4F8F8;
+  --foreground: #031716;
 
   --card: #FFFFFF;
-  --card-foreground: #292A40;
+  --card-foreground: #031716;
 
   --popover: #FFFFFF;
-  --popover-foreground: #292A40;
+  --popover-foreground: #031716;
 
-  --primary: #A83238;
+  --primary: #0C969C;
   --primary-foreground: #FFFFFF;
 
-  --secondary: #292A40;
+  --secondary: #032F30;
   --secondary-foreground: #FFFFFF;
 
-  --muted: #F3EEE5;
-  --muted-foreground: #777783;
+  --muted: #E6EEEE;
+  --muted-foreground: #274D60;
 
-  --accent: #F3E5E2;
-  --accent-foreground: #85272D;
+  --accent: #E1F2F2;
+  --accent-foreground: #0A7075;
 
   --destructive: #DC2626;
 
-  --border: #E7DED5;
-  --input: #E7DED5;
-  --ring: #A83238;
+  --border: #CCE0E0;
+  --input: #CCE0E0;
+  --ring: #0C969C;
 
-  --chart-1: #A83238;
-  --chart-2: #292A40;
-  --chart-3: #C77B7E;
-  --chart-4: #D8B8AE;
-  --chart-5: #777783;
+  --chart-1: #0C969C;
+  --chart-2: #032F30;
+  --chart-3: #6BA3BE;
+  --chart-4: #274D60;
+  --chart-5: #0A7075;
 
   --radius: 0.75rem;
 
   --sidebar: #FFFFFF;
-  --sidebar-foreground: #292A40;
-  --sidebar-primary: #A83238;
+  --sidebar-foreground: #031716;
+  --sidebar-primary: #0C969C;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #F3E5E2;
-  --sidebar-accent-foreground: #85272D;
-  --sidebar-border: #E7DED5;
-  --sidebar-ring: #A83238;
+  --sidebar-accent: #E1F2F2;
+  --sidebar-accent-foreground: #0A7075;
+  --sidebar-border: #CCE0E0;
+  --sidebar-ring: #0C969C;
 
   --transition-speed: 0.25s;
 }
 
 /* =========================================
-   BOOKNOOK - PREMIUM DARK THEME
-   Midnight Navy + Wine Burgundy
+   BOOKNOOK - PREMIUM DARK THEME (New Custom Palette)
 ========================================= */
 
 .dark {
   color-scheme: dark;
 
   /* Background */
-  --background: #15151F;
-  --foreground: #F5F0EA;
+  --background: #031716;
+  --foreground: #F4F8F8;
 
   /* Cards */
-  --card: #20202D;
-  --card-foreground: #F5F0EA;
+  --card: #032F30;
+  --card-foreground: #F4F8F8;
 
   /* Popover */
-  --popover: #252533;
-  --popover-foreground: #F5F0EA;
+  --popover: #0A7075;
+  --popover-foreground: #F4F8F8;
 
-  /* Primary Burgundy */
-  --primary: #C65B65;
+  /* Primary Accent */
+  --primary: #0C969C;
   --primary-foreground: #FFFFFF;
 
-  /* Secondary Navy */
-  --secondary: #303044;
-  --secondary-foreground: #F5F0EA;
+  /* Secondary Deep */
+  --secondary: #274D60;
+  --secondary-foreground: #F4F8F8;
 
   /* Muted */
-  --muted: #292938;
-  --muted-foreground: #AAA8B6;
+  --muted: #032F30;
+  --muted-foreground: #6BA3BE;
 
   /* Accent */
-  --accent: #3B2933;
-  --accent-foreground: #F0A1A6;
+  --accent: #0A7075;
+  --accent-foreground: #FFFFFF;
 
   /* Border & Input */
-  --border: #393847;
-  --input: #393847;
-  --ring: #C65B65;
+  --border: #274D60;
+  --input: #274D60;
+  --ring: #0C969C;
 
   /* Destructive */
   --destructive: #EF646A;
 
   /* Charts */
-  --chart-1: #C65B65;
-  --chart-2: #8D687A;
-  --chart-3: #D6A3A0;
-  --chart-4: #77758F;
-  --chart-5: #A83238;
+  --chart-1: #0C969C;
+  --chart-2: #6BA3BE;
+  --chart-3: #0A7075;
+  --chart-4: #274D60;
+  --chart-5: #032F30;
 
   /* Sidebar */
-  --sidebar: #1D1D29;
-  --sidebar-foreground: #F5F0EA;
-  --sidebar-primary: #C65B65;
+  --sidebar: #032F30;
+  --sidebar-foreground: #F4F8F8;
+  --sidebar-primary: #0C969C;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #3B2933;
-  --sidebar-accent-foreground: #F0A1A6;
-  --sidebar-border: #393847;
-  --sidebar-ring: #C65B65;
+  --sidebar-accent: #0A7075;
+  --sidebar-accent-foreground: #FFFFFF;
+  --sidebar-border: #274D60;
+  --sidebar-ring: #0C969C;
 }
 
 /* =========================================
@@ -139,10 +136,10 @@
   --color-muted-foreground: var(--muted-foreground);
 
   --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-foreground: var(--color-accent-foreground);
 
   --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
+  --color-card-foreground: var(--color-card-foreground);
 
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
@@ -152,15 +149,6 @@
   --color-ring: var(--ring);
 
   --color-destructive: var(--destructive);
-
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -184,7 +172,6 @@ body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
-
   transition:
     background-color var(--transition-speed) ease,
     color var(--transition-speed) ease;
@@ -218,11 +205,11 @@ button {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #85272D;
+  background: #0A7075;
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: #E07880;
+  background: #6BA3BE;
 }
 
 /* =========================================
@@ -245,10 +232,8 @@ button {
   position: sticky;
   top: 0;
   z-index: 50;
-
   background: color-mix(in srgb, var(--background) 90%, transparent);
   backdrop-filter: blur(14px);
-
   border-bottom: 1px solid var(--border);
 }
 
@@ -256,10 +241,8 @@ button {
   position: relative;
   padding: 8px 12px;
   border-radius: 8px;
-
   color: var(--foreground);
   font-weight: 500;
-
   transition: all var(--transition-speed) ease;
 }
 
@@ -281,11 +264,9 @@ button {
 .btn-primary {
   background: var(--primary);
   color: var(--primary-foreground);
-
   padding: 10px 22px;
   border-radius: 9px;
   font-weight: 600;
-
   transition: all var(--transition-speed) ease;
 }
 
@@ -299,11 +280,9 @@ button {
   color: var(--primary);
   border: 1.5px solid var(--primary);
   background: transparent;
-
   padding: 9px 20px;
   border-radius: 9px;
   font-weight: 600;
-
   transition: all var(--transition-speed) ease;
 }
 
@@ -318,24 +297,20 @@ button {
 .book-card {
   background: var(--card);
   color: var(--card-foreground);
-
   border: 1px solid var(--border);
   border-radius: 14px;
-
   overflow: hidden;
-
   transition: all var(--transition-speed) ease;
 }
 
 .book-card:hover {
   transform: translateY(-5px);
   border-color: var(--primary);
-
-  box-shadow: 0 12px 28px rgba(40, 30, 40, 0.09);
+  box-shadow: 0 12px 28px rgba(3, 23, 22, 0.12);
 }
 
 .dark .book-card:hover {
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
 }
 
 /* =========================================
@@ -345,13 +320,10 @@ button {
 .badge {
   display: inline-flex;
   align-items: center;
-
   padding: 5px 12px;
   border-radius: 20px;
-
   background: var(--accent);
   color: var(--accent-foreground);
-
   font-size: 12px;
   font-weight: 600;
 }
@@ -378,7 +350,6 @@ select:focus-visible {
     var(--secondary),
     var(--primary)
   );
-
   color: #FFFFFF;
 }
 
@@ -387,11 +358,11 @@ select:focus-visible {
 }
 
 .hero-section p {
-  color: #F5E9E8;
+  color: #E6EEEE;
 }
 
 .hero-highlight {
-  color: #F0A1A6;
+  color: #6BA3BE;
 }
 
 /* =========================================
@@ -429,7 +400,7 @@ hr {
 }
 
 .footer a {
-  color: #F0A1A6;
+  color: #6BA3BE;
   transition: color var(--transition-speed) ease;
 }
 
@@ -438,33 +409,7 @@ hr {
 }
 
 /* =========================================
-   DARK MODE EXTRA STYLING
-========================================= */
-
-.dark body {
-  background: #15151F;
-  color: #F5F0EA;
-}
-
-.dark .navbar {
-  background: rgba(21, 21, 31, 0.88);
-}
-
-.dark .book-card {
-  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.15);
-}
-
-.dark .book-card:hover {
-  border-color: #C65B65;
-}
-
-.dark ::selection {
-  background: #713940;
-  color: #FFFFFF;
-}
-
-/* =========================================
-   ANIMATIONS
+   ANIMATIONS & RESPONSIVE
 ========================================= */
 
 @keyframes fadeIn {
@@ -472,7 +417,6 @@ hr {
     opacity: 0;
     transform: translateY(10px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -482,10 +426,6 @@ hr {
 .animate-fade-in {
   animation: fadeIn 0.5s ease forwards;
 }
-
-/* =========================================
-   RESPONSIVE
-========================================= */
 
 @media (max-width: 768px) {
   .nav-link {
