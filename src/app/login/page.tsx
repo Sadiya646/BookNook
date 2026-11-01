@@ -1,12 +1,12 @@
-
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { Lock, Mail, ArrowRight, BookOpen } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -48,56 +48,103 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-950 px-4">
-      <form
-        onSubmit={handleLogin}
-        className="w-full max-w-md space-y-5 rounded-xl bg-gray-900 p-8"
-      >
-        <h1 className="text-3xl font-bold text-white text-center">
+    <form
+      onSubmit={handleLogin}
+      className="w-full max-w-md space-y-6 rounded-3xl border border-[#0C969C]/25 bg-[#F4F8F8] p-8 shadow-2xl backdrop-blur-xl dark:border-[#274D60]/50 dark:bg-[#032F30] md:p-10"
+    >
+      {/* Brand Icon & Heading */}
+      <div className="text-center">
+        <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0C969C] to-[#032F30] text-white shadow-lg shadow-[#0C969C]/30">
+          <BookOpen className="h-7 w-7" />
+        </div>
+        <h1 className="text-3xl font-black tracking-tight text-[#031716] dark:text-[#F4F8F8]">
           Welcome Back
         </h1>
-
-        <p className="text-center text-gray-400">
+        <p className="mt-1 text-sm font-medium text-[#274D60] dark:text-[#6BA3BE]">
           Login to your BookNook account
         </p>
+      </div>
 
-        {error && (
-          <p className="text-red-400 text-sm">{error}</p>
+      {error && (
+        <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-3.5 text-center text-xs font-semibold text-red-500">
+          {error}
+        </div>
+      )}
+
+      <div className="space-y-4">
+        {/* Email Field */}
+        <div className="space-y-1.5">
+          <label className="text-xs font-bold uppercase tracking-wider text-[#274D60] dark:text-[#6BA3BE]">
+            Email Address
+          </label>
+          <div className="relative flex items-center">
+            <Mail className="absolute left-4 h-4 w-4 text-[#0C969C] pointer-events-none" />
+            <input
+              type="email"
+              placeholder="name@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="h-12 w-full pl-11 pr-4 rounded-2xl border border-[#CCE0E0] bg-white text-sm text-[#031716] shadow-sm outline-none transition-all focus:border-[#0C969C] focus:ring-2 focus:ring-[#0C969C]/20 dark:border-[#274D60] dark:bg-[#031716] dark:text-[#F4F8F8]"
+            />
+          </div>
+        </div>
+
+        {/* Password Field */}
+        <div className="space-y-1.5">
+          <label className="text-xs font-bold uppercase tracking-wider text-[#274D60] dark:text-[#6BA3BE]">
+            Password
+          </label>
+          <div className="relative flex items-center">
+            <Lock className="absolute left-4 h-4 w-4 text-[#0C969C] pointer-events-none" />
+            <input
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="h-12 w-full pl-11 pr-4 rounded-2xl border border-[#CCE0E0] bg-white text-sm text-[#031716] shadow-sm outline-none transition-all focus:border-[#0C969C] focus:ring-2 focus:ring-[#0C969C]/20 dark:border-[#274D60] dark:bg-[#031716] dark:text-[#F4F8F8]"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Submit Button */}
+      <button
+        type="submit"
+        disabled={loading}
+        className="w-full flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#0C969C] to-[#0A7075] py-4 text-sm font-bold uppercase tracking-wider text-white shadow-xl shadow-[#0C969C]/30 transition-all hover:scale-[1.01] hover:shadow-2xl hover:shadow-[#0C969C]/40 active:scale-95 disabled:opacity-50"
+      >
+        {loading ? (
+          "Logging in..."
+        ) : (
+          <>
+            Login to Account
+            <ArrowRight size={18} />
+          </>
         )}
+      </button>
 
-        <input
-          type="email"
-          placeholder="Email Address"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="w-full rounded-lg p-3 bg-gray-800 text-white"
-        />
-
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          className="w-full rounded-lg p-3 bg-gray-800 text-white"
-        />
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full rounded-lg bg-blue-600 p-3 text-white font-semibold disabled:opacity-50"
+      {/* Register Link */}
+      <p className="text-center text-sm font-medium text-[#274D60] dark:text-[#6BA3BE]">
+        Don&apos;t have an account?{" "}
+        <Link
+          href="/register"
+          className="font-bold text-[#0C969C] hover:underline dark:text-[#6BA3BE]"
         >
-          {loading ? "Logging in..." : "Login"}
-        </button>
+          Register
+        </Link>
+      </p>
+    </form>
+  );
+}
 
-        <p className="text-center text-gray-400">
-          Don't have an account?{" "}
-          <Link href="/register" className="text-blue-400">
-            Register
-          </Link>
-        </p>
-      </form>
+export default function LoginPage() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-[#F4F8F8] px-4 dark:bg-[#031716]">
+      <Suspense fallback={<div className="text-[#0C969C]">Loading...</div>}>
+        <LoginForm />
+      </Suspense>
     </div>
   );
 }
