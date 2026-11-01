@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/sonner";
 import Navbar from "@/components/layout/Navbar";
 import "./globals.css";
 
+
 const playfair = Playfair_Display({
   subsets: ["latin"],
   weight: ["700"],
@@ -26,6 +27,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main>{children}</main>
           <Toaster richColors position="top-right" />
         </ThemeProvider>
+
+        
       </body>
     </html>
   );
