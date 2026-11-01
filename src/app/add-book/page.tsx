@@ -11,26 +11,28 @@ import {
   Image,
 } from "lucide-react";
 
+import { authClient } from "@/lib/auth-client";
+
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
-const LOGGED_IN_USER = {
-  name: "Aisha Rahman",
-  email: "aisha@booknook.example",
+const initialFormData = {
+  title: "",
+  author: "",
+  category: "Fiction",
+  totalCopies: "1",
+  description: "",
+  image: "",
 };
 
 export default function AddBookForm() {
-  const [formData, setFormData] = useState({
-    title: "",
-    author: "",
-    category: "Fiction",
-    totalCopies: "1",
-    description: "",
-    image: "",
-  });
+  const { data: session, isPending } = authClient.useSession();
 
+  const user = session?.user;
+
+  const [formData, setFormData] = useState(initialFormData);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (
@@ -44,24 +46,35 @@ export default function AddBookForm() {
     }));
   };
 
-  const handleSubmit = async (
-    e: FormEvent<HTMLFormElement>
-  ) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!user) {
+      toast.error("Please login first.");
+      return;
+    }
+
+    const totalCopies = Number(formData.totalCopies);
 
     if (
       !formData.title.trim() ||
       !formData.author.trim() ||
       !formData.description.trim() ||
       !formData.image.trim() ||
-      Number(formData.totalCopies) < 1
+      !Number.isInteger(totalCopies) ||
+      totalCopies < 1
     ) {
-      toast.error("Please fill in all required fields.");
+      toast.error("Please fill in all required fields correctly.");
       return;
     }
 
     try {
-      new URL(formData.image);
+      const imageUrl = new URL(formData.image);
+
+      if (!["http:", "https:"].includes(imageUrl.protocol)) {
+        toast.error("Please enter a valid image URL.");
+        return;
+      }
     } catch {
       toast.error("Please enter a valid image URL.");
       return;
@@ -78,10 +91,19 @@ export default function AddBookForm() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            ...formData,
-            totalCopies: Number(formData.totalCopies),
-            availableCopies: Number(formData.totalCopies),
-            addedBy: LOGGED_IN_USER,
+            title: formData.title.trim(),
+            author: formData.author.trim(),
+            category: formData.category,
+            description: formData.description.trim(),
+            imageUrl: formData.image.trim(),
+
+            totalCopies,
+            copies: totalCopies,
+
+            userName: user.name,
+            userEmail: user.email,
+
+            createdAt: new Date().toISOString(),
           }),
         }
       );
@@ -89,21 +111,12 @@ export default function AddBookForm() {
       const result = await res.json();
 
       if (!res.ok) {
-        throw new Error(
-          result.message || "Failed to add book"
-        );
+        throw new Error(result.message || "Failed to add book");
       }
 
       toast.success("Book successfully added!");
 
-      setFormData({
-        title: "",
-        author: "",
-        category: "Fiction",
-        totalCopies: "1",
-        description: "",
-        image: "",
-      });
+      setFormData(initialFormData);
     } catch (error) {
       toast.error(
         error instanceof Error
@@ -139,7 +152,6 @@ export default function AddBookForm() {
         {/* Book Title */}
         <div className="space-y-2">
           <Label htmlFor="title">Book Title *</Label>
-
           <Input
             id="title"
             name="title"
@@ -205,6 +217,7 @@ export default function AddBookForm() {
             name="totalCopies"
             type="number"
             min="1"
+            step="1"
             placeholder="Enter total copies"
             value={formData.totalCopies}
             onChange={handleChange}
@@ -231,13 +244,13 @@ export default function AddBookForm() {
             />
           </div>
 
-          {/* Image Preview */}
           {formData.image && (
             <div className="mt-3">
               <p className="mb-2 text-sm text-gray-500">
                 Image Preview
               </p>
 
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={formData.image}
                 alt="Book cover preview"
@@ -271,21 +284,33 @@ export default function AddBookForm() {
             Added By
           </p>
 
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <User className="h-4 w-4" />
-            {LOGGED_IN_USER.name}
-          </div>
+          {isPending ? (
+            <p className="text-sm text-gray-500">
+              Loading user information...
+            </p>
+          ) : user ? (
+            <>
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <User className="h-4 w-4" />
+                {user.name}
+              </div>
 
-          <div className="mt-2 flex items-center gap-2 text-sm text-gray-600">
-            <Mail className="h-4 w-4" />
-            {LOGGED_IN_USER.email}
-          </div>
+              <div className="mt-2 flex items-center gap-2 text-sm text-gray-600">
+                <Mail className="h-4 w-4" />
+                {user.email}
+              </div>
+            </>
+          ) : (
+            <p className="text-sm text-red-500">
+              Please login to add a book.
+            </p>
+          )}
         </div>
 
         {/* Submit */}
         <Button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || isPending || !user}
           className="w-full"
         >
           {isSubmitting ? (

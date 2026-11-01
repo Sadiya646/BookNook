@@ -14,7 +14,7 @@ interface Book {
   totalCopies: number;
   availableCopies: number;
   description: string;
-  image?: string;
+  imageUrl?: string;
 }
 
 export default function BooksPage() {
@@ -139,9 +139,9 @@ export default function BooksPage() {
               >
                 {/* Book Image */}
                 <div className="flex h-64 items-center justify-center bg-gray-100 p-5">
-                  {book.image ? (
+                  {book.imageUrl ? (
                     <img
-                      src={book.image}
+                      src={book.imageUrl}
                       alt={book.title}
                       className="h-full w-full object-contain"
                       onError={(e) => {

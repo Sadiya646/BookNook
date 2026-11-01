@@ -35,7 +35,11 @@ const publicLinks = [
 const privateLinks = [
   { href: "/add-book", label: "Add Book", icon: PlusCircle },
   { href: "/my-books", label: "My Books", icon: BookMarked },
-  { href: "/my-borrows", label: "My Borrows", icon: BookOpen },
+  {
+  href: "/my-borrows",
+  label: "My Borrows",
+  icon: BookOpen,
+},
 ];
 
 export default function Navbar() {

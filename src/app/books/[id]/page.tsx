@@ -69,7 +69,7 @@ export default async function BookDetailsPage({ params }: Props) {
                 className="max-h-96 w-full object-contain"
               />
             ) : (
-              <div className="flex aspect-[3/4] w-full items-center justify-center bg-blue-50 p-8 text-center font-heading text-2xl text-blue-600">
+              <div className="flex aspect-3/4 w-full items-center justify-center bg-blue-50 p-8 text-center font-heading text-2xl text-blue-600">
                 {book.title}
               </div>
             )}
