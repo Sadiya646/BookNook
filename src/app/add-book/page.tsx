@@ -5,10 +5,10 @@ import { useState, type FormEvent, type ChangeEvent } from "react";
 import { toast } from "sonner";
 import {
   BookOpen,
-  ImagePlus,
   User,
   Mail,
   Plus,
+  Image,
 } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
@@ -28,13 +28,10 @@ export default function AddBookForm() {
     category: "Fiction",
     totalCopies: "1",
     description: "",
+    image: "",
   });
 
-  const [imageFile, setImageFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const fieldClass =
-    "w-full rounded-lg border border-gray-300 px-4 py-2";
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -47,16 +44,6 @@ export default function AddBookForm() {
     }));
   };
 
-  const handleImageChange = (
-    e: ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = e.target.files?.[0];
-
-    if (file) {
-      setImageFile(file);
-    }
-  };
-
   const handleSubmit = async (
     e: FormEvent<HTMLFormElement>
   ) => {
@@ -66,28 +53,38 @@ export default function AddBookForm() {
       !formData.title.trim() ||
       !formData.author.trim() ||
       !formData.description.trim() ||
+      !formData.image.trim() ||
       Number(formData.totalCopies) < 1
     ) {
-      toast.error("Please fill in all mandatory fields.");
+      toast.error("Please fill in all required fields.");
+      return;
+    }
+
+    try {
+      new URL(formData.image);
+    } catch {
+      toast.error("Please enter a valid image URL.");
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      const res = await fetch( `${process.env.NEXT_PUBLIC_API_URL}/add-book`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...formData,
-          totalCopies: Number(formData.totalCopies),
-          availableCopies: Number(formData.totalCopies),
-          image: "",
-          addedBy: LOGGED_IN_USER,
-        }),
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/add-book`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...formData,
+            totalCopies: Number(formData.totalCopies),
+            availableCopies: Number(formData.totalCopies),
+            addedBy: LOGGED_IN_USER,
+          }),
+        }
+      );
 
       const result = await res.json();
 
@@ -105,17 +102,8 @@ export default function AddBookForm() {
         category: "Fiction",
         totalCopies: "1",
         description: "",
+        image: "",
       });
-
-      setImageFile(null);
-
-      const fileInput = document.getElementById(
-        "bookImage"
-      ) as HTMLInputElement | null;
-
-      if (fileInput) {
-        fileInput.value = "";
-      }
     } catch (error) {
       toast.error(
         error instanceof Error
@@ -129,24 +117,25 @@ export default function AddBookForm() {
 
   return (
     <div className="mx-auto w-full max-w-2xl rounded-2xl bg-white p-6 shadow-lg">
-      <div className="mb-6">
-        <div className="mb-3 flex items-center gap-3">
-          <div className="rounded-lg bg-blue-100 p-3">
-            <BookOpen className="h-6 w-6 text-blue-600" />
-          </div>
 
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900">
-              Add New Book
-            </h2>
-            <p className="text-sm text-gray-500">
-              Add a new book to your collection.
-            </p>
-          </div>
+      {/* Header */}
+      <div className="mb-6 flex items-center gap-3">
+        <div className="rounded-lg bg-blue-100 p-3">
+          <BookOpen className="h-6 w-6 text-blue-600" />
+        </div>
+
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Add New Book
+          </h2>
+          <p className="text-sm text-gray-500">
+            Add a new book to your collection.
+          </p>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
+
         {/* Book Title */}
         <div className="space-y-2">
           <Label htmlFor="title">Book Title *</Label>
@@ -194,7 +183,7 @@ export default function AddBookForm() {
                 category: e.target.value,
               }))
             }
-            className={fieldClass}
+            className="w-full rounded-lg border border-gray-300 px-4 py-2"
           >
             <option value="Fiction">Fiction</option>
             <option value="Non-Fiction">Non-Fiction</option>
@@ -223,6 +212,44 @@ export default function AddBookForm() {
           />
         </div>
 
+        {/* Image URL */}
+        <div className="space-y-2">
+          <Label htmlFor="image">Book Cover Image URL *</Label>
+
+          <div className="relative">
+            <Image className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+
+            <Input
+              id="image"
+              name="image"
+              type="url"
+              placeholder="https://example.com/book-cover.jpg"
+              value={formData.image}
+              onChange={handleChange}
+              className="pl-10"
+              required
+            />
+          </div>
+
+          {/* Image Preview */}
+          {formData.image && (
+            <div className="mt-3">
+              <p className="mb-2 text-sm text-gray-500">
+                Image Preview
+              </p>
+
+              <img
+                src={formData.image}
+                alt="Book cover preview"
+                className="h-40 w-32 rounded-lg border object-cover"
+                onError={(e) => {
+                  e.currentTarget.style.display = "none";
+                }}
+              />
+            </div>
+          )}
+        </div>
+
         {/* Description */}
         <div className="space-y-2">
           <Label htmlFor="description">Description *</Label>
@@ -235,36 +262,6 @@ export default function AddBookForm() {
             onChange={handleChange}
             rows={5}
             required
-          />
-        </div>
-
-        {/* Image */}
-        <div className="space-y-2">
-          <Label htmlFor="bookImage">Book Cover Image</Label>
-
-          <label
-            htmlFor="bookImage"
-            className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-300 p-6 text-center hover:border-blue-500"
-          >
-            <ImagePlus className="mb-2 h-8 w-8 text-gray-400" />
-
-            <span className="text-sm font-medium text-gray-700">
-              {imageFile
-                ? imageFile.name
-                : "Click to upload book cover"}
-            </span>
-
-            <span className="mt-1 text-xs text-gray-400">
-              PNG, JPG or JPEG
-            </span>
-          </label>
-
-          <Input
-            id="bookImage"
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="hidden"
           />
         </div>
 
@@ -285,7 +282,7 @@ export default function AddBookForm() {
           </div>
         </div>
 
-        {/* Submit Button */}
+        {/* Submit */}
         <Button
           type="submit"
           disabled={isSubmitting}
@@ -300,6 +297,7 @@ export default function AddBookForm() {
             </>
           )}
         </Button>
+
       </form>
     </div>
   );
