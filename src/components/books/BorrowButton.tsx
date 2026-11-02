@@ -1,10 +1,9 @@
+
 "use client";
 
 import { useState } from "react";
 import { toast } from "sonner";
 import type { Book } from "@/types";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 type Props = {
   book: Book;
@@ -36,15 +35,15 @@ export default function BorrowButton({ book }: Props) {
     try {
       setLoading(true);
 
-      const res = await fetch(`${API_URL}/borrow`, {
+      const res = await fetch("/api/borrow", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           bookId: book._id,
-          borrowerName: name,
-          borrowerEmail: email,
+          name: name.trim(),
+          email: email.trim().toLowerCase(),
         }),
       });
 
@@ -54,9 +53,6 @@ export default function BorrowButton({ book }: Props) {
         throw new Error(data.message || "Failed to borrow book");
       }
 
-      localStorage.setItem("borrowerName", name.trim());
-      localStorage.setItem("borrowerEmail", email.trim().toLowerCase());
-
       toast.success("Book borrowed successfully!");
 
       setOpen(false);
@@ -64,7 +60,9 @@ export default function BorrowButton({ book }: Props) {
       setEmail("");
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Something went wrong"
+        error instanceof Error
+          ? error.message
+          : "Something went wrong"
       );
     } finally {
       setLoading(false);
@@ -73,39 +71,46 @@ export default function BorrowButton({ book }: Props) {
 
   return (
     <>
-      {/* Trigger Button */}
       <button
         onClick={() => setOpen(true)}
         disabled={book.copies < 1}
         className="w-full rounded-xl bg-gradient-to-r from-[#0C969C] to-[#0A7075] px-6 py-3.5 font-bold uppercase tracking-wider text-white shadow-md shadow-[#0C969C]/25 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#0C969C]/40 active:scale-95 disabled:cursor-not-allowed disabled:bg-none disabled:bg-[#274D60]/40 disabled:text-[#6BA3BE]/50 disabled:shadow-none"
       >
-        {book.copies < 1 ? "Currently Unavailable" : "Borrow This Book"}
+        {book.copies < 1
+          ? "Currently Unavailable"
+          : "Borrow This Book"}
       </button>
 
-      {/* Modal Overlay */}
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#031716]/60 p-4 backdrop-blur-sm animate-fade-in">
           <div className="w-full max-w-md rounded-2xl border border-[#0C969C]/20 bg-[#F4F8F8] p-7 shadow-2xl dark:border-[#274D60] dark:bg-[#032F30]">
-            
+
             <h2 className="text-2xl font-black text-[#031716] dark:text-[#F4F8F8]">
               Confirm Borrow
             </h2>
 
             <p className="mt-2 text-sm text-[#274D60] dark:text-[#6BA3BE]">
               You are borrowing{" "}
-              <strong className="text-[#031716] dark:text-[#F4F8F8]">{book.title}</strong>.
+              <strong className="text-[#031716] dark:text-[#F4F8F8]">
+                {book.title}
+              </strong>.
             </p>
 
             <div className="mt-3 inline-flex items-center gap-2 rounded-xl border border-[#0C969C]/20 bg-[#0C969C]/10 px-3.5 py-2 text-xs font-semibold text-[#0A7075] dark:border-[#6BA3BE]/30 dark:bg-[#031716]/40 dark:text-[#6BA3BE]">
               <span>Return it by:</span>
-              <strong className="text-[#031716] dark:text-[#F4F8F8]">{formattedDueDate}</strong>
+
+              <strong className="text-[#031716] dark:text-[#F4F8F8]">
+                {formattedDueDate}
+              </strong>
             </div>
 
             <form onSubmit={handleBorrow} className="mt-6 space-y-4">
+
               <div>
                 <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-[#274D60] dark:text-[#6BA3BE]">
                   Name
                 </label>
+
                 <input
                   type="text"
                   value={name}
@@ -120,6 +125,7 @@ export default function BorrowButton({ book }: Props) {
                 <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-[#274D60] dark:text-[#6BA3BE]">
                   Email
                 </label>
+
                 <input
                   type="email"
                   value={email}
@@ -134,6 +140,7 @@ export default function BorrowButton({ book }: Props) {
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
+                  disabled={loading}
                   className="w-full rounded-xl border border-[#CCE0E0] bg-white px-4 py-3 text-xs font-bold uppercase tracking-wider text-[#274D60] transition-all hover:bg-[#E6EEEE] dark:border-[#274D60] dark:bg-[#031716] dark:text-[#6BA3BE] dark:hover:bg-[#0A7075]/20"
                 >
                   Cancel
@@ -147,8 +154,8 @@ export default function BorrowButton({ book }: Props) {
                   {loading ? "Processing..." : "Confirm Borrow"}
                 </button>
               </div>
-            </form>
 
+            </form>
           </div>
         </div>
       )}
