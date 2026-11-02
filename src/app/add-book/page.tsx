@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, type FormEvent, type ChangeEvent } from "react";
@@ -39,6 +40,7 @@ export default function AddBookForm() {
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -69,6 +71,7 @@ export default function AddBookForm() {
 
     try {
       const imageUrl = new URL(formData.image);
+
       if (!["http:", "https:"].includes(imageUrl.protocol)) {
         toast.error("Please enter a valid image URL.");
         return;
@@ -85,6 +88,7 @@ export default function AddBookForm() {
         `${process.env.NEXT_PUBLIC_API_URL}/add-book`,
         {
           method: "POST",
+          credentials: "include",
           headers: {
             "Content-Type": "application/json",
           },
@@ -95,10 +99,6 @@ export default function AddBookForm() {
             description: formData.description.trim(),
             imageUrl: formData.image.trim(),
             totalCopies,
-            copies: totalCopies,
-            userName: user.name,
-            userEmail: user.email,
-            createdAt: new Date().toISOString(),
           }),
         }
       );
@@ -122,7 +122,7 @@ export default function AddBookForm() {
 
   return (
     <div className="mx-auto w-full max-w-3xl rounded-3xl border border-[#0C969C]/25 bg-[#F4F8F8] p-8 shadow-2xl backdrop-blur-xl dark:border-[#274D60]/50 dark:bg-[#032F30] md:p-10">
-      
+
       {/* Header */}
       <div className="mb-8 flex items-center gap-4 border-b border-[#0C969C]/15 pb-6 dark:border-[#274D60]/40">
         <div className="flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0C969C] to-[#032F30] text-white shadow-lg shadow-[#0C969C]/30">
@@ -140,15 +140,20 @@ export default function AddBookForm() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        
+
         {/* Row 1: Title & Author */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="title" className="text-xs font-bold uppercase tracking-wider text-[#274D60] dark:text-[#6BA3BE]">
+            <Label
+              htmlFor="title"
+              className="text-xs font-bold uppercase tracking-wider text-[#274D60] dark:text-[#6BA3BE]"
+            >
               Book Title *
             </Label>
+
             <div className="relative flex items-center">
-              <BookOpen className="absolute left-4 h-4 w-4 text-[#0C969C] pointer-events-none" />
+              <BookOpen className="pointer-events-none absolute left-4 h-4 w-4 text-[#0C969C]" />
+
               <Input
                 id="title"
                 name="title"
@@ -156,17 +161,22 @@ export default function AddBookForm() {
                 value={formData.title}
                 onChange={handleChange}
                 required
-                className="h-12 pl-11 rounded-2xl border-[#CCE0E0] bg-white text-sm text-[#031716] shadow-sm focus-visible:border-[#0C969C] focus-visible:ring-2 focus-visible:ring-[#0C969C]/20 dark:border-[#274D60] dark:bg-[#031716] dark:text-[#F4F8F8]"
+                className="h-12 rounded-2xl border-[#CCE0E0] bg-white pl-11 text-sm text-[#031716] shadow-sm focus-visible:border-[#0C969C] focus-visible:ring-2 focus-visible:ring-[#0C969C]/20 dark:border-[#274D60] dark:bg-[#031716] dark:text-[#F4F8F8]"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="author" className="text-xs font-bold uppercase tracking-wider text-[#274D60] dark:text-[#6BA3BE]">
+            <Label
+              htmlFor="author"
+              className="text-xs font-bold uppercase tracking-wider text-[#274D60] dark:text-[#6BA3BE]"
+            >
               Author Name *
             </Label>
+
             <div className="relative flex items-center">
-              <User className="absolute left-4 h-4 w-4 text-[#0C969C] pointer-events-none" />
+              <User className="pointer-events-none absolute left-4 h-4 w-4 text-[#0C969C]" />
+
               <Input
                 id="author"
                 name="author"
@@ -174,7 +184,7 @@ export default function AddBookForm() {
                 value={formData.author}
                 onChange={handleChange}
                 required
-                className="h-12 pl-11 rounded-2xl border-[#CCE0E0] bg-white text-sm text-[#031716] shadow-sm focus-visible:border-[#0C969C] focus-visible:ring-2 focus-visible:ring-[#0C969C]/20 dark:border-[#274D60] dark:bg-[#031716] dark:text-[#F4F8F8]"
+                className="h-12 rounded-2xl border-[#CCE0E0] bg-white pl-11 text-sm text-[#031716] shadow-sm focus-visible:border-[#0C969C] focus-visible:ring-2 focus-visible:ring-[#0C969C]/20 dark:border-[#274D60] dark:bg-[#031716] dark:text-[#F4F8F8]"
               />
             </div>
           </div>
@@ -183,11 +193,16 @@ export default function AddBookForm() {
         {/* Row 2: Category & Total Copies */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="category" className="text-xs font-bold uppercase tracking-wider text-[#274D60] dark:text-[#6BA3BE]">
+            <Label
+              htmlFor="category"
+              className="text-xs font-bold uppercase tracking-wider text-[#274D60] dark:text-[#6BA3BE]"
+            >
               Category *
             </Label>
+
             <div className="relative flex items-center">
-              <Layers className="absolute left-4 h-4 w-4 text-[#0C969C] pointer-events-none z-10" />
+              <Layers className="pointer-events-none absolute left-4 z-10 h-4 w-4 text-[#0C969C]" />
+
               <select
                 id="category"
                 name="category"
@@ -208,11 +223,16 @@ export default function AddBookForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="totalCopies" className="text-xs font-bold uppercase tracking-wider text-[#274D60] dark:text-[#6BA3BE]">
+            <Label
+              htmlFor="totalCopies"
+              className="text-xs font-bold uppercase tracking-wider text-[#274D60] dark:text-[#6BA3BE]"
+            >
               Total Copies *
             </Label>
+
             <div className="relative flex items-center">
-              <Hash className="absolute left-4 h-4 w-4 text-[#0C969C] pointer-events-none" />
+              <Hash className="pointer-events-none absolute left-4 h-4 w-4 text-[#0C969C]" />
+
               <Input
                 id="totalCopies"
                 name="totalCopies"
@@ -223,7 +243,7 @@ export default function AddBookForm() {
                 value={formData.totalCopies}
                 onChange={handleChange}
                 required
-                className="h-12 pl-11 rounded-2xl border-[#CCE0E0] bg-white text-sm text-[#031716] shadow-sm focus-visible:border-[#0C969C] focus-visible:ring-2 focus-visible:ring-[#0C969C]/20 dark:border-[#274D60] dark:bg-[#031716] dark:text-[#F4F8F8]"
+                className="h-12 rounded-2xl border-[#CCE0E0] bg-white pl-11 text-sm text-[#031716] shadow-sm focus-visible:border-[#0C969C] focus-visible:ring-2 focus-visible:ring-[#0C969C]/20 dark:border-[#274D60] dark:bg-[#031716] dark:text-[#F4F8F8]"
               />
             </div>
           </div>
@@ -231,11 +251,16 @@ export default function AddBookForm() {
 
         {/* Row 3: Book Cover Image URL */}
         <div className="space-y-2">
-          <Label htmlFor="image" className="text-xs font-bold uppercase tracking-wider text-[#274D60] dark:text-[#6BA3BE]">
+          <Label
+            htmlFor="image"
+            className="text-xs font-bold uppercase tracking-wider text-[#274D60] dark:text-[#6BA3BE]"
+          >
             Book Cover Image URL *
           </Label>
+
           <div className="relative flex items-center">
-            <ImageIcon className="absolute left-4 h-4 w-4 text-[#0C969C] pointer-events-none" />
+            <ImageIcon className="pointer-events-none absolute left-4 h-4 w-4 text-[#0C969C]" />
+
             <Input
               id="image"
               name="image"
@@ -244,7 +269,7 @@ export default function AddBookForm() {
               value={formData.image}
               onChange={handleChange}
               required
-              className="h-12 pl-11 rounded-2xl border-[#CCE0E0] bg-white text-sm text-[#031716] shadow-sm focus-visible:border-[#0C969C] focus-visible:ring-2 focus-visible:ring-[#0C969C]/20 dark:border-[#274D60] dark:bg-[#031716] dark:text-[#F4F8F8]"
+              className="h-12 rounded-2xl border-[#CCE0E0] bg-white pl-11 text-sm text-[#031716] shadow-sm focus-visible:border-[#0C969C] focus-visible:ring-2 focus-visible:ring-[#0C969C]/20 dark:border-[#274D60] dark:bg-[#031716] dark:text-[#F4F8F8]"
             />
           </div>
 
@@ -259,9 +284,14 @@ export default function AddBookForm() {
                   e.currentTarget.style.display = "none";
                 }}
               />
+
               <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-[#0C969C]">Preview Active</p>
-                <p className="text-xs text-[#274D60] dark:text-[#6BA3BE]">Cover loaded successfully.</p>
+                <p className="text-xs font-bold uppercase tracking-wider text-[#0C969C]">
+                  Preview Active
+                </p>
+                <p className="text-xs text-[#274D60] dark:text-[#6BA3BE]">
+                  Cover loaded successfully.
+                </p>
               </div>
             </div>
           )}
@@ -269,11 +299,16 @@ export default function AddBookForm() {
 
         {/* Row 4: Description */}
         <div className="space-y-2">
-          <Label htmlFor="description" className="text-xs font-bold uppercase tracking-wider text-[#274D60] dark:text-[#6BA3BE]">
+          <Label
+            htmlFor="description"
+            className="text-xs font-bold uppercase tracking-wider text-[#274D60] dark:text-[#6BA3BE]"
+          >
             Description *
           </Label>
+
           <div className="relative">
-            <FileText className="absolute left-4 top-4 h-4 w-4 text-[#0C969C] pointer-events-none" />
+            <FileText className="pointer-events-none absolute left-4 top-4 h-4 w-4 text-[#0C969C]" />
+
             <Textarea
               id="description"
               name="description"
@@ -282,7 +317,7 @@ export default function AddBookForm() {
               onChange={handleChange}
               rows={4}
               required
-              className="pl-11 rounded-2xl border-[#CCE0E0] bg-white text-sm text-[#031716] shadow-sm focus-visible:border-[#0C969C] focus-visible:ring-2 focus-visible:ring-[#0C969C]/20 dark:border-[#274D60] dark:bg-[#031716] dark:text-[#F4F8F8]"
+              className="rounded-2xl border-[#CCE0E0] bg-white pl-11 text-sm text-[#031716] shadow-sm focus-visible:border-[#0C969C] focus-visible:ring-2 focus-visible:ring-[#0C969C]/20 dark:border-[#274D60] dark:bg-[#031716] dark:text-[#F4F8F8]"
             />
           </div>
         </div>
@@ -331,7 +366,6 @@ export default function AddBookForm() {
             </>
           )}
         </Button>
-
       </form>
     </div>
   );
