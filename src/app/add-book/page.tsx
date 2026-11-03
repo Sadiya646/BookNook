@@ -84,24 +84,20 @@ export default function AddBookForm() {
     setIsSubmitting(true);
 
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/add-book`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            title: formData.title.trim(),
-            author: formData.author.trim(),
-            category: formData.category,
-            description: formData.description.trim(),
-            imageUrl: formData.image.trim(),
-            totalCopies,
-          }),
-        }
-      );
+      const res = await fetch("/api/add-book", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: formData.title.trim(),
+          author: formData.author.trim(),
+          category: formData.category,
+          description: formData.description.trim(),
+          imageUrl: formData.image.trim(),
+          totalCopies,
+        }),
+      });
 
       const result = await res.json();
 
@@ -121,7 +117,7 @@ export default function AddBookForm() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-3xl rounded-3xl border border-[#0C969C]/25 bg-[#F4F8F8] p-8 shadow-2xl backdrop-blur-xl dark:border-[#274D60]/50 dark:bg-[#032F30] md:p-10">
+    <div className="mx-auto w-full max-w-3xl rounded-3xl border border-[#0C969C]/25 bg-[#F4F8F8] p-8 shadow-2xl backdrop-blur-xl dark:border-[#274D60]/50 dark:bg-[#032F30]">
 
       {/* Header */}
       <div className="mb-8 flex items-center gap-4 border-b border-[#0C969C]/15 pb-6 dark:border-[#274D60]/40">

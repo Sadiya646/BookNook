@@ -9,11 +9,11 @@ import {
   X,
   Loader2,
   Plus,
-  Image as ImageIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 
 import { authClient } from "@/lib/auth-client";
+import { getToken } from "@/lib/get-token";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -72,7 +72,6 @@ export default function MyBooksPage() {
     if (isPending) return;
 
     if (!user) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setBooks([]);
       setLoading(false);
       return;
@@ -82,8 +81,12 @@ export default function MyBooksPage() {
       try {
         setLoading(true);
 
+        const token = await getToken();
+
         const res = await fetch(`${API_URL}/my-books`, {
-          credentials: "include",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
 
         const result = await res.json();
@@ -107,7 +110,7 @@ export default function MyBooksPage() {
     fetchMyBooks();
   }, [user?.email, isPending]);
 
-  // Open edit modal with existing data
+  // Open edit modal
   const handleEdit = (book: Book) => {
     setSelectedBook(book);
 
@@ -170,13 +173,15 @@ export default function MyBooksPage() {
     try {
       setIsSaving(true);
 
+      const token = await getToken();
+
       const res = await fetch(
         `${API_URL}/my-books/${selectedBook._id}`,
         {
           method: "PUT",
-          credentials: "include",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             title: formData.title.trim(),
@@ -195,13 +200,16 @@ export default function MyBooksPage() {
         throw new Error(result.message || "Failed to update book");
       }
 
-      // Update UI without reloading the page
       setBooks((prev) =>
         prev.map((book) =>
           book._id === selectedBook._id
             ? {
                 ...book,
-                ...formData,
+                title: formData.title.trim(),
+                author: formData.author.trim(),
+                category: formData.category,
+                description: formData.description.trim(),
+                imageUrl: formData.imageUrl.trim(),
                 totalCopies,
               }
             : book
@@ -230,11 +238,15 @@ export default function MyBooksPage() {
     try {
       setIsDeleting(true);
 
+      const token = await getToken();
+
       const res = await fetch(
         `${API_URL}/my-books/${deletingBook._id}`,
         {
           method: "DELETE",
-          credentials: "include",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
@@ -244,7 +256,6 @@ export default function MyBooksPage() {
         throw new Error(result.message || "Failed to delete book");
       }
 
-      // Remove deleted book from UI
       setBooks((prev) =>
         prev.filter((book) => book._id !== deletingBook._id)
       );
@@ -300,7 +311,6 @@ export default function MyBooksPage() {
 
   return (
     <div className="min-h-screen bg-[#F4F8F8] px-4 py-12 dark:bg-[#031716] md:px-8">
-
       <div className="mx-auto max-w-7xl">
 
         {/* Page Header */}
@@ -369,7 +379,6 @@ export default function MyBooksPage() {
             </Button>
           </div>
         ) : (
-
           /* Books Grid */
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {books.map((book) => (
@@ -450,11 +459,10 @@ export default function MyBooksPage() {
         )}
       </div>
 
-      {/* ================= EDIT MODAL ================= */}
+      {/* EDIT MODAL */}
       {selectedBook && (
         <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/60 p-4 backdrop-blur-sm">
           <div className="my-8 w-full max-w-2xl rounded-3xl bg-white p-6 shadow-2xl dark:bg-[#032F30] md:p-8">
-
             <div className="mb-6 flex items-center justify-between">
               <div>
                 <h2 className="text-2xl font-black text-[#031716] dark:text-white">
@@ -477,7 +485,6 @@ export default function MyBooksPage() {
             </div>
 
             <form onSubmit={handleUpdate} className="space-y-4">
-
               <div className="space-y-2">
                 <Label htmlFor="edit-title">Book Title</Label>
                 <Input
@@ -539,7 +546,6 @@ export default function MyBooksPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="edit-image">Book Cover Image URL</Label>
-
                 <Input
                   id="edit-image"
                   name="imageUrl"
@@ -552,7 +558,6 @@ export default function MyBooksPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="edit-description">Description</Label>
-
                 <Textarea
                   id="edit-description"
                   name="description"
@@ -593,11 +598,10 @@ export default function MyBooksPage() {
         </div>
       )}
 
-      {/* ================= DELETE CONFIRMATION MODAL ================= */}
+      {/* DELETE CONFIRMATION MODAL */}
       {deletingBook && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
           <div className="w-full max-w-md rounded-3xl bg-white p-7 shadow-2xl dark:bg-[#032F30]">
-
             <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-red-100 text-red-600">
               <Trash2 className="h-8 w-8" />
             </div>
@@ -648,7 +652,6 @@ export default function MyBooksPage() {
           </div>
         </div>
       )}
-
     </div>
   );
 }
