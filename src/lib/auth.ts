@@ -4,16 +4,29 @@ import { jwt } from "better-auth/plugins";
 import { MongoClient } from "mongodb";
 
 const client = new MongoClient(process.env.MONGODB_URL!);
+
 const database = client.db("bookstore");
 
 export const auth = betterAuth({
   database: mongodbAdapter(database),
 
+  baseURL: process.env.BETTER_AUTH_URL,
+
+  trustedOrigins: [
+    "https://booknook-pied.vercel.app",
+    "http://localhost:3000",
+  ],
+
   emailAndPassword: {
     enabled: true,
   },
 
-  baseURL: process.env.BETTER_AUTH_URL,
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    },
+  },
 
   plugins: [jwt()],
 });
