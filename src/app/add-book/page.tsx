@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 
 import { authClient } from "@/lib/auth-client";
+import { getToken } from "@/lib/get-token";
+
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -84,10 +86,21 @@ export default function AddBookForm() {
     setIsSubmitting(true);
 
     try {
-      const res = await fetch("/api/add-book", {
+      // Get JWT token from Better Auth
+      const token = await getToken();
+
+      const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+      if (!API_URL) {
+        throw new Error("API URL is not configured.");
+      }
+
+      // Send book data with JWT to backend
+      const res = await fetch(`${API_URL}/add-book`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           title: formData.title.trim(),
@@ -102,14 +115,19 @@ export default function AddBookForm() {
       const result = await res.json();
 
       if (!res.ok) {
-        throw new Error(result.message || "Failed to add book");
+        throw new Error(result.message || "Failed to add book.");
       }
 
       toast.success("Book successfully added!");
+
       setFormData(initialFormData);
     } catch (error) {
+      console.error("Add book error:", error);
+
       toast.error(
-        error instanceof Error ? error.message : "Something went wrong!"
+        error instanceof Error
+          ? error.message
+          : "Something went wrong!"
       );
     } finally {
       setIsSubmitting(false);
@@ -121,7 +139,7 @@ export default function AddBookForm() {
 
       {/* Header */}
       <div className="mb-8 flex items-center gap-4 border-b border-[#0C969C]/15 pb-6 dark:border-[#274D60]/40">
-        <div className="flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0C969C] to-[#032F30] text-white shadow-lg shadow-[#0C969C]/30">
+        <div className="flex size-14 items-center justify-center rounded-2xl bg-linear-to-br from-[#0C969C] to-[#032F30] text-white shadow-lg shadow-[#0C969C]/30">
           <BookOpen className="h-7 w-7 text-white" />
         </div>
 
@@ -351,7 +369,7 @@ export default function AddBookForm() {
         <Button
           type="submit"
           disabled={isSubmitting || isPending || !user}
-          className="w-full rounded-2xl bg-gradient-to-r from-[#0C969C] to-[#0A7075] py-7 text-sm font-bold uppercase tracking-wider text-white shadow-xl shadow-[#0C969C]/30 transition-all hover:scale-[1.01] hover:shadow-2xl hover:shadow-[#0C969C]/40 active:scale-95 disabled:opacity-50"
+          className="w-full rounded-2xl bg-linear-to-r from-[#0C969C] to-[#0A7075] py-7 text-sm font-bold uppercase tracking-wider text-white shadow-xl shadow-[#0C969C]/30 transition-all hover:scale-[1.01] hover:shadow-2xl hover:shadow-[#0C969C]/40 active:scale-95 disabled:opacity-50"
         >
           {isSubmitting ? (
             "Processing..."
