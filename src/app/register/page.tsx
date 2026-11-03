@@ -11,6 +11,7 @@ import {
   ArrowRight,
   BookOpen,
   Loader2,
+  Image,
 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 
@@ -19,7 +20,9 @@ export default function RegisterPage() {
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [photoURL, setPhotoURL] = useState("");
   const [password, setPassword] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState("");
@@ -49,7 +52,8 @@ export default function RegisterPage() {
         name,
         email,
         password,
-        callbackURL: "/",
+        image: photoURL,
+        callbackURL: "/login",
       });
 
       if (error) {
@@ -57,10 +61,11 @@ export default function RegisterPage() {
         return;
       }
 
-      router.push("/");
+      router.push("/login");
       router.refresh();
     } catch (err) {
       console.error("Registration Error:", err);
+
       setError(
         err instanceof Error
           ? err.message
@@ -72,34 +77,33 @@ export default function RegisterPage() {
   };
 
   // Google Registration
- // Google Registration
-const handleGoogleRegister = async () => {
-  setGoogleLoading(true);
-  setError("");
+  const handleGoogleRegister = async () => {
+    setGoogleLoading(true);
+    setError("");
 
-  try {
-    const { error } = await authClient.signIn.social({
-      provider: "google",
-      callbackURL: "https://booknook-pied.vercel.app/",
-    });
+    try {
+      const { error } = await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "https://booknook-pied.vercel.app/",
+      });
 
-    if (error) {
-      console.error("Google Registration Error:", error);
-      setError(error.message || "Google registration failed.");
+      if (error) {
+        console.error("Google Registration Error:", error);
+        setError(error.message || "Google registration failed.");
+        setGoogleLoading(false);
+      }
+    } catch (err) {
+      console.error("Google Registration Exception:", err);
+
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Unable to register with Google. Please try again."
+      );
+
       setGoogleLoading(false);
     }
-  } catch (err) {
-    console.error("Google Registration Exception:", err);
-
-    setError(
-      err instanceof Error
-        ? err.message
-        : "Unable to register with Google. Please try again."
-    );
-
-    setGoogleLoading(false);
-  }
-};
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#F4F8F8] px-4 py-10 dark:bg-[#031716]">
@@ -194,6 +198,26 @@ const handleGoogleRegister = async () => {
                 placeholder="John Doe"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                required
+                className="h-12 w-full pl-11 pr-4 rounded-2xl border border-[#CCE0E0] bg-white text-sm text-[#031716] shadow-sm outline-none transition-all focus:border-[#0C969C] focus:ring-2 focus:ring-[#0C969C]/20 dark:border-[#274D60] dark:bg-[#031716] dark:text-[#F4F8F8]"
+              />
+            </div>
+          </div>
+
+          {/* Photo URL */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold uppercase tracking-wider text-[#274D60] dark:text-[#6BA3BE]">
+              Photo URL
+            </label>
+
+            <div className="relative flex items-center">
+              <Image className="absolute left-4 h-4 w-4 text-[#0C969C] pointer-events-none" />
+
+              <input
+                type="url"
+                placeholder="https://example.com/photo.jpg"
+                value={photoURL}
+                onChange={(e) => setPhotoURL(e.target.value)}
                 required
                 className="h-12 w-full pl-11 pr-4 rounded-2xl border border-[#CCE0E0] bg-white text-sm text-[#031716] shadow-sm outline-none transition-all focus:border-[#0C969C] focus:ring-2 focus:ring-[#0C969C]/20 dark:border-[#274D60] dark:bg-[#031716] dark:text-[#F4F8F8]"
               />

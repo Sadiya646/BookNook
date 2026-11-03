@@ -44,6 +44,7 @@ export default function Footer() {
 
             {/* Social Links */}
             <div className="mt-6 flex items-center gap-3">
+              {/* Facebook */}
               <a
                 href="https://facebook.com"
                 target="_blank"
@@ -54,6 +55,7 @@ export default function Footer() {
                 <Globe size={18} />
               </a>
 
+              {/* GitHub */}
               <a
                 href="https://github.com"
                 target="_blank"
@@ -64,14 +66,34 @@ export default function Footer() {
                 <Code2 size={18} />
               </a>
 
+              {/* LinkedIn */}
               <a
-                href="https://linkedin.com"
+                href="https://www.linkedin.com/in/sadiya-tasnim/"
                 target="_blank"
                 rel="noreferrer"
                 aria-label="LinkedIn"
                 className="rounded-xl border border-[#274D60] p-2.5 text-[#A7C5C5] transition hover:border-[#0C969C] hover:bg-[#0C969C] hover:text-white"
               >
                 <BriefcaseBusiness size={18} />
+              </a>
+
+              {/* X (Twitter) */}
+              <a
+                href="https://x.com/sadiatasnim646"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="X"
+                className="rounded-xl border border-[#274D60] p-2.5 text-[#A7C5C5] transition hover:border-[#0C969C] hover:bg-[#0C969C] hover:text-white"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="18"
+                  height="18"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path d="M18.9 2H22l-6.8 7.8L23.2 22h-6.3l-5-7.1L5.7 22H2.5l7.3-8.4L1.8 2h6.5l4.5 6.5L18.9 2Zm-1.1 18h1.7L7.3 3.9H5.5L17.8 20Z" />
+                </svg>
               </a>
             </div>
           </div>
@@ -123,7 +145,7 @@ export default function Footer() {
                 <Phone className="mt-1 h-5 w-5 shrink-0 text-[#0C969C]" />
 
                 <span className="text-sm text-[#A7C5C5]">
-                  +880 1XXXXXXXXX
+                  +880 1
                 </span>
               </li>
 
