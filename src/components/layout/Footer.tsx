@@ -145,7 +145,7 @@ export default function Footer() {
                 <Phone className="mt-1 h-5 w-5 shrink-0 text-[#0C969C]" />
 
                 <span className="text-sm text-[#A7C5C5]">
-                  +880 1
+                  +880 1731372829
                 </span>
               </li>
 
