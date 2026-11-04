@@ -38,7 +38,7 @@ const slides = [
     button: "Browse Books",
     link: "/books",
     icon: BookOpen,
-    image: "/hero/hero-1.jpg",
+    image: "/public/images/hero1.avif",
   },
   {
     subtitle: "DISCOVER YOUR NEXT READ",
@@ -48,7 +48,7 @@ const slides = [
     button: "Browse Books",
     link: "/books",
     icon: Library,
-    image: "/hero/hero-2.jpg",
+    image: "/public/images/hero2.avif",
   },
   {
     subtitle: "SHARE YOUR SHELF",
@@ -58,7 +58,7 @@ const slides = [
     button: "Browse Books",
     link: "/books",
     icon: BookMarked,
-    image: "/hero/hero-3.jpg",
+    image: "/public/images/hero3.avif",
   },
 ];
 
@@ -83,9 +83,9 @@ export default function HeroSlider() {
           effect="fade"
           fadeEffect={{ crossFade: true }}
           loop={true}
-          speed={1200}
+          speed={900}
           autoplay={{
-            delay: 5500,
+            delay: 3000,
             disableOnInteraction: false,
             pauseOnMouseEnter: true,
           }}
