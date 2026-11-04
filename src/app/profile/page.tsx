@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -149,7 +148,7 @@ export default function ProfilePage() {
 
   if (isPending || (user && loading)) {
     return (
-      <div className="min-h-[70vh] flex items-center justify-center">
+      <div className="min-h-[70vh] flex items-center justify-center pt-28">
         <Loader2 className="animate-spin text-[#0C969C]" size={35} />
       </div>
     );
@@ -157,7 +156,7 @@ export default function ProfilePage() {
 
   if (!user) {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center gap-4">
+      <div className="min-h-[70vh] flex flex-col items-center justify-center gap-4 pt-28">
         <UserRound size={45} className="text-[#0C969C]" />
         <h2 className="text-xl font-bold">Please login to view your profile</h2>
       </div>
@@ -165,7 +164,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#F4F8F8] dark:bg-[#031716] py-12 px-4">
+    <main className="min-h-screen bg-[#F4F8F8] dark:bg-[#031716] py-12 px-4 pt-28 md:pt-32">
       <div className="max-w-6xl mx-auto space-y-8">
 
         {/* Profile Header */}

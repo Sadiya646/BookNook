@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
@@ -72,6 +71,7 @@ export default function MyBooksPage() {
     if (isPending) return;
 
     if (!user) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setBooks([]);
       setLoading(false);
       return;
@@ -286,7 +286,7 @@ export default function MyBooksPage() {
   // Login required
   if (!user) {
     return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 px-4 text-center">
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 px-4 text-center pt-28">
         <BookOpen className="h-16 w-16 text-[#0C969C]" />
 
         <h2 className="text-2xl font-bold">
@@ -310,7 +310,7 @@ export default function MyBooksPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F4F8F8] px-4 py-12 dark:bg-[#031716] md:px-8">
+    <div className="min-h-screen bg-[#F4F8F8] px-4 pt-28 pb-12 dark:bg-[#031716] md:px-8 md:pt-32">
       <div className="mx-auto max-w-7xl">
 
         {/* Page Header */}

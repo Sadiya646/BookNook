@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
@@ -144,7 +143,7 @@ export default function MyBorrowsPage() {
 
   if (isPending || loading) {
     return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 pt-28">
         <Loader2 className="h-10 w-10 animate-spin text-[#0C969C]" />
         <p className="text-sm text-[#537579]">
           Loading your borrowed books...
@@ -154,7 +153,7 @@ export default function MyBorrowsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#F4F8F8] px-4 py-12 dark:bg-[#031716] sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-[#F4F8F8] px-4 pt-28 pb-12 dark:bg-[#031716] sm:px-6 lg:px-8 md:pt-32">
       <div className="mx-auto max-w-7xl">
 
         {/* Header */}
@@ -250,7 +249,7 @@ export default function MyBorrowsPage() {
             </h2>
 
             <p className="mx-auto mt-3 max-w-md text-sm leading-7 text-[#537579] dark:text-[#A7C5C5]">
-              You haven't borrowed any books yet. Explore our collection and
+              You haven&apos;t borrowed any books yet. Explore our collection and
               find something interesting to read.
             </p>
 

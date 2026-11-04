@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -66,7 +65,7 @@ export default function AllBooksPage() {
   });
 
   return (
-    <main className="min-h-screen bg-[#F4F8F8] px-4 py-12 dark:bg-[#031716] md:px-8">
+    <main className="min-h-screen bg-[#F4F8F8] px-4 pt-28 pb-12 dark:bg-[#031716] md:px-8 md:pt-32">
       <div className="mx-auto max-w-7xl">
 
         <div className="mb-10 text-center">
