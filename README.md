@@ -2,8 +2,6 @@
 
 A small online library. **Add a book, borrow a book, return a book.**
 
-🔗 **Live site:** [LIVE SITE URL]
-⚙️ **Server repo:** [GITHUB SERVER LINK]
 
 ## Features
 
@@ -25,7 +23,7 @@ A small online library. **Add a book, borrow a book, return a book.**
 ## Run Locally
 
 ```bash
-git clone [GITHUB CLIENT LINK]
+git clone(https://github.com/Sadiya646/BookNook.git)
 cd booknook-client
 npm install
 npm run dev
