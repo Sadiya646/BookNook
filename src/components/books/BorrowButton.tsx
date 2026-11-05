@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -34,10 +35,24 @@ export default function BorrowButton({ book }: Props) {
   const { data: session } = authClient.useSession();
   const user = session?.user;
 
-  const notAvailable = book.copies < 1;
+  // Available copies check
+  const availableCopies =
+    book.copies ?? book.availableCopies ?? 0;
 
-  // new Date() render-er bhetore na, click korle calculate hobe
+  const notAvailable = availableCopies <= 0;
+
+  // Open borrow modal
   function openModal() {
+    if (notAvailable) {
+      toast.error("This book is currently unavailable.");
+      return;
+    }
+
+    if (!user) {
+      toast.error("Please login first.");
+      return;
+    }
+
     const dueDate = new Date();
     dueDate.setDate(dueDate.getDate() + 7);
 
@@ -52,11 +67,20 @@ export default function BorrowButton({ book }: Props) {
     setOpen(true);
   }
 
-  async function handleBorrow(e: React.FormEvent<HTMLFormElement>) {
+  // Confirm borrow
+  async function handleBorrow(
+    e: React.FormEvent<HTMLFormElement>
+  ) {
     e.preventDefault();
 
     if (!user) {
       toast.error("Please login first.");
+      return;
+    }
+
+    if (notAvailable) {
+      toast.error("This book is currently unavailable.");
+      setOpen(false);
       return;
     }
 
@@ -70,28 +94,41 @@ export default function BorrowButton({ book }: Props) {
         throw new Error("API URL is not configured.");
       }
 
+      if (!token) {
+        throw new Error("Authentication token not found. Please login again.");
+      }
+
       const res = await fetch(`${API_URL}/borrow`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ bookId: book._id }),
+        body: JSON.stringify({
+          bookId: book._id,
+        }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || "Failed to borrow book.");
+        throw new Error(
+          data.message || "Failed to borrow book."
+        );
       }
 
       toast.success("Book borrowed successfully!");
+
       setOpen(false);
       router.refresh();
+
     } catch (error) {
       console.error("Borrow error:", error);
+
       toast.error(
-        error instanceof Error ? error.message : "Something went wrong."
+        error instanceof Error
+          ? error.message
+          : "Something went wrong."
       );
     } finally {
       setLoading(false);
@@ -100,27 +137,59 @@ export default function BorrowButton({ book }: Props) {
 
   return (
     <>
-      <Button
-        type="button"
-        onClick={openModal}
-        disabled={!user || notAvailable}
-        className="w-full bg-[#0C969C] text-white hover:bg-[#087b80] disabled:opacity-60"
-      >
-        {notAvailable ? "Not Available" : "Borrow Book"}
-      </Button>
+      {/* Borrow Button */}
+      <div className="space-y-2">
+        <Button
+          type="button"
+          onClick={openModal}
+          disabled={!user || notAvailable}
+          className="w-full bg-[#0C969C] text-white hover:bg-[#087b80] disabled:cursor-not-allowed disabled:bg-gray-400 disabled:text-white disabled:opacity-70"
+        >
+          {notAvailable
+            ? "Not Available"
+            : "Borrow This Book"}
+        </Button>
 
-      <Dialog open={open} onOpenChange={setOpen}>
+        {/* Available Copies */}
+        <p
+          className={`text-center text-sm font-semibold ${
+            notAvailable
+              ? "text-red-500"
+              : "text-[#0C969C]"
+          }`}
+        >
+          {notAvailable
+            ? "Currently out of stock"
+            : `${availableCopies} ${
+                availableCopies === 1 ? "copy" : "copies"
+              } available`}
+        </p>
+      </div>
+
+      {/* Borrow Confirmation Modal */}
+      <Dialog
+        open={open}
+        onOpenChange={(value) => {
+          if (!loading) {
+            setOpen(value);
+          }
+        }}
+      >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-xl font-semibold">
               Confirm Borrow
             </DialogTitle>
+
             <DialogDescription>
               Please review your borrowing information.
             </DialogDescription>
           </DialogHeader>
 
-          <form onSubmit={handleBorrow} className="space-y-4">
+          <form
+            onSubmit={handleBorrow}
+            className="space-y-4"
+          >
             <div className="space-y-2">
               <Label>Book Title</Label>
               <Input value={book.title} readOnly />
@@ -128,17 +197,26 @@ export default function BorrowButton({ book }: Props) {
 
             <div className="space-y-2">
               <Label>Your Name</Label>
-              <Input value={user?.name || ""} readOnly />
+              <Input
+                value={user?.name || ""}
+                readOnly
+              />
             </div>
 
             <div className="space-y-2">
               <Label>Your Email</Label>
-              <Input value={user?.email || ""} readOnly />
+              <Input
+                value={user?.email || ""}
+                readOnly
+              />
             </div>
 
             <div className="space-y-2">
               <Label>Return Date</Label>
-              <Input value={formattedDueDate} readOnly />
+              <Input
+                value={formattedDueDate}
+                readOnly
+              />
             </div>
 
             <p className="text-sm text-gray-500">
@@ -157,10 +235,12 @@ export default function BorrowButton({ book }: Props) {
 
               <Button
                 type="submit"
-                disabled={loading || !user}
-                className="bg-[#0C969C] text-white hover:bg-[#087b80]"
+                disabled={loading || !user || notAvailable}
+                className="bg-[#0C969C] text-white hover:bg-[#087b80] disabled:opacity-60"
               >
-                {loading ? "Borrowing..." : "Confirm Borrow"}
+                {loading
+                  ? "Borrowing..."
+                  : "Confirm Borrow"}
               </Button>
             </DialogFooter>
           </form>

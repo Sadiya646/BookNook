@@ -1,4 +1,5 @@
 export interface Book {
+  availableCopies: number;
   _id: string;
   title: string;
   author: string;
