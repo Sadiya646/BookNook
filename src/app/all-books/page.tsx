@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Search, BookOpen, Loader2 } from "lucide-react";
+import { Search, BookOpen, Loader2, ArrowRight } from "lucide-react";
 
 interface Book {
   _id: string;
@@ -166,14 +166,22 @@ export default function AllBooksPage() {
                       By {book.author}
                     </p>
 
-                    <div className="mt-4 border-t border-[#0C969C]/15 pt-3 text-sm">
-                      <span className="text-muted-foreground">
-                        Available:{" "}
-                      </span>
-                      <span className="font-bold text-[#0C969C]">
-                        {book.copies ?? book.availableCopies ?? book.totalCopies}
-                      </span>
-                    </div>
+                   <div className="mt-4 border-t border-[#0C969C]/15 pt-3">
+  <div className="mb-4 flex items-center justify-between text-sm">
+    <span className="text-muted-foreground">
+      Available Copies
+    </span>
+
+    <span className="font-bold text-[#0C969C]">
+      {book.copies ?? book.availableCopies ?? book.totalCopies}
+    </span>
+  </div>
+
+  <div className="flex items-center justify-center gap-2 rounded-lg bg-[#0C969C] px-4 py-2.5 text-sm font-bold text-white transition-all duration-300 group-hover:bg-[#0A7075]">
+    View Details
+    <ArrowRight size={16} />
+  </div>
+</div>
                   </div>
                 </Link>
               ))}

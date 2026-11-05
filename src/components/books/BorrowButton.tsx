@@ -1,7 +1,7 @@
-
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import type { Book } from "@/types";
 import { getToken } from "@/lib/get-token";
@@ -27,19 +27,30 @@ type Props = {
 export default function BorrowButton({ book }: Props) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [formattedDueDate, setFormattedDueDate] = useState("");
+
+  const router = useRouter();
 
   const { data: session } = authClient.useSession();
-
   const user = session?.user;
 
-  const dueDate = new Date();
-  dueDate.setDate(dueDate.getDate() + 7);
+  const notAvailable = book.copies < 1;
 
-  const formattedDueDate = dueDate.toLocaleDateString("en-GB", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  });
+  // new Date() render-er bhetore na, click korle calculate hobe
+  function openModal() {
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + 7);
+
+    setFormattedDueDate(
+      dueDate.toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      })
+    );
+
+    setOpen(true);
+  }
 
   async function handleBorrow(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -52,25 +63,20 @@ export default function BorrowButton({ book }: Props) {
     try {
       setLoading(true);
 
-      // Get JWT token from Better Auth
       const token = await getToken();
-
       const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
       if (!API_URL) {
         throw new Error("API URL is not configured.");
       }
 
-      // Send borrow request with JWT
       const res = await fetch(`${API_URL}/borrow`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          bookId: book._id,
-        }),
+        body: JSON.stringify({ bookId: book._id }),
       });
 
       const data = await res.json();
@@ -80,18 +86,12 @@ export default function BorrowButton({ book }: Props) {
       }
 
       toast.success("Book borrowed successfully!");
-
       setOpen(false);
-
-      // Refresh current page data
-      window.location.reload();
+      router.refresh();
     } catch (error) {
       console.error("Borrow error:", error);
-
       toast.error(
-        error instanceof Error
-          ? error.message
-          : "Something went wrong."
+        error instanceof Error ? error.message : "Something went wrong."
       );
     } finally {
       setLoading(false);
@@ -101,11 +101,12 @@ export default function BorrowButton({ book }: Props) {
   return (
     <>
       <Button
-        onClick={() => setOpen(true)}
-        disabled={!user}
-        className="w-full bg-[#0C969C] text-white hover:bg-[#087b80]"
+        type="button"
+        onClick={openModal}
+        disabled={!user || notAvailable}
+        className="w-full bg-[#0C969C] text-white hover:bg-[#087b80] disabled:opacity-60"
       >
-        Borrow Book
+        {notAvailable ? "Not Available" : "Borrow Book"}
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
@@ -114,7 +115,6 @@ export default function BorrowButton({ book }: Props) {
             <DialogTitle className="text-xl font-semibold">
               Confirm Borrow
             </DialogTitle>
-
             <DialogDescription>
               Please review your borrowing information.
             </DialogDescription>

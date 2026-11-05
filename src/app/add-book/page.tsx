@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, type FormEvent, type ChangeEvent } from "react";
+import { useEffect, useState, type FormEvent, type ChangeEvent } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
   BookOpen,
@@ -11,6 +12,7 @@ import {
   Layers,
   FileText,
   Hash,
+  Loader2,
 } from "lucide-react";
 
 import { authClient } from "@/lib/auth-client";
@@ -21,21 +23,59 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
+const CATEGORIES = ["Fiction", "Science", "History", "Kids", "Others"];
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
+
 const initialFormData = {
   title: "",
   author: "",
   category: "Fiction",
   totalCopies: "1",
   description: "",
-  image: "",
 };
 
+// Image file imgbb-te upload kore link ferot dey
+async function uploadToImgbb(file: File): Promise<string> {
+  const apiKey = process.env.NEXT_PUBLIC_IMGBB_API_KEY;
+
+  if (!apiKey) {
+    throw new Error("Image upload key is not configured.");
+  }
+
+  const body = new FormData();
+  body.append("image", file);
+
+  const res = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+    method: "POST",
+    body,
+  });
+
+  const data = await res.json();
+
+  if (!res.ok || !data.success) {
+    throw new Error("Image upload failed. Please try again.");
+  }
+
+  return data.data.url as string;
+}
+
 export default function AddBookForm() {
+  const router = useRouter();
+
   const { data: session, isPending } = authClient.useSession();
   const user = session?.user;
 
   const [formData, setFormData] = useState(initialFormData);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Preview URL memory theke clean up kore
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -46,6 +86,31 @@ export default function AddBookForm() {
       ...prev,
       [name]: value,
     }));
+  };
+
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (!file) {
+      setImageFile(null);
+      setPreviewUrl("");
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file.");
+      e.target.value = "";
+      return;
+    }
+
+    if (file.size > MAX_IMAGE_SIZE) {
+      toast.error("Image must be smaller than 5MB.");
+      e.target.value = "";
+      return;
+    }
+
+    setImageFile(file);
+    setPreviewUrl(URL.createObjectURL(file));
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -62,7 +127,6 @@ export default function AddBookForm() {
       !formData.title.trim() ||
       !formData.author.trim() ||
       !formData.description.trim() ||
-      !formData.image.trim() ||
       !Number.isInteger(totalCopies) ||
       totalCopies < 1
     ) {
@@ -70,22 +134,18 @@ export default function AddBookForm() {
       return;
     }
 
-    try {
-      const imageUrl = new URL(formData.image);
-
-      if (!["http:", "https:"].includes(imageUrl.protocol)) {
-        toast.error("Please enter a valid image URL.");
-        return;
-      }
-    } catch {
-      toast.error("Please enter a valid image URL.");
+    if (!imageFile) {
+      toast.error("Please select a book cover image.");
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      // Get JWT token from Better Auth
+      // 1. Image imgbb-te upload
+      const imageUrl = await uploadToImgbb(imageFile);
+
+      // 2. JWT token
       const token = await getToken();
 
       const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -94,7 +154,8 @@ export default function AddBookForm() {
         throw new Error("API URL is not configured.");
       }
 
-      // Send book data with JWT to backend
+      // 3. Book data backend-e pathao
+      // Spec onujayi route: POST /books (backend-e rename korle ekhane-o "/books" koro)
       const res = await fetch(`${API_URL}/add-book`, {
         method: "POST",
         headers: {
@@ -106,7 +167,7 @@ export default function AddBookForm() {
           author: formData.author.trim(),
           category: formData.category,
           description: formData.description.trim(),
-          imageUrl: formData.image.trim(),
+          imageUrl,
           totalCopies,
         }),
       });
@@ -120,18 +181,26 @@ export default function AddBookForm() {
       toast.success("Book successfully added!");
 
       setFormData(initialFormData);
+      setImageFile(null);
+      setPreviewUrl("");
+
+      router.push("/my-books");
     } catch (error) {
       console.error("Add book error:", error);
 
       toast.error(
-        error instanceof Error
-          ? error.message
-          : "Something went wrong!"
+        error instanceof Error ? error.message : "Something went wrong!"
       );
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  const inputClass =
+    "h-12 rounded-2xl border-[#CCE0E0] bg-white pl-11 text-sm text-[#031716] shadow-sm focus-visible:border-[#0C969C] focus-visible:ring-2 focus-visible:ring-[#0C969C]/20 dark:border-[#274D60] dark:bg-[#031716] dark:text-[#F4F8F8]";
+
+  const labelClass =
+    "text-xs font-bold uppercase tracking-wider text-[#274D60] dark:text-[#6BA3BE]";
 
   return (
     <main className="min-h-screen bg-[#F4F8F8] px-4 pt-28 pb-12 dark:bg-[#031716] sm:px-6 lg:px-8 md:pt-32">
@@ -144,11 +213,11 @@ export default function AddBookForm() {
           </div>
 
           <div>
-            <h2 className="text-3xl font-black tracking-tight text-[#031716] dark:text-[#F4F8F8]">
+            <h1 className="text-3xl font-black tracking-tight text-[#031716] dark:text-[#F4F8F8]">
               Add New Book
-            </h2>
+            </h1>
             <p className="text-sm font-medium text-[#274D60] dark:text-[#6BA3BE]">
-              Expand your library collection with luxury details.
+              Share a book with the BookNook community.
             </p>
           </div>
         </div>
@@ -158,10 +227,7 @@ export default function AddBookForm() {
           {/* Row 1: Title & Author */}
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="space-y-2">
-              <Label
-                htmlFor="title"
-                className="text-xs font-bold uppercase tracking-wider text-[#274D60] dark:text-[#6BA3BE]"
-              >
+              <Label htmlFor="title" className={labelClass}>
                 Book Title *
               </Label>
 
@@ -175,16 +241,13 @@ export default function AddBookForm() {
                   value={formData.title}
                   onChange={handleChange}
                   required
-                  className="h-12 rounded-2xl border-[#CCE0E0] bg-white pl-11 text-sm text-[#031716] shadow-sm focus-visible:border-[#0C969C] focus-visible:ring-2 focus-visible:ring-[#0C969C]/20 dark:border-[#274D60] dark:bg-[#031716] dark:text-[#F4F8F8]"
+                  className={inputClass}
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label
-                htmlFor="author"
-                className="text-xs font-bold uppercase tracking-wider text-[#274D60] dark:text-[#6BA3BE]"
-              >
+              <Label htmlFor="author" className={labelClass}>
                 Author Name *
               </Label>
 
@@ -198,7 +261,7 @@ export default function AddBookForm() {
                   value={formData.author}
                   onChange={handleChange}
                   required
-                  className="h-12 rounded-2xl border-[#CCE0E0] bg-white pl-11 text-sm text-[#031716] shadow-sm focus-visible:border-[#0C969C] focus-visible:ring-2 focus-visible:ring-[#0C969C]/20 dark:border-[#274D60] dark:bg-[#031716] dark:text-[#F4F8F8]"
+                  className={inputClass}
                 />
               </div>
             </div>
@@ -207,10 +270,7 @@ export default function AddBookForm() {
           {/* Row 2: Category & Total Copies */}
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="space-y-2">
-              <Label
-                htmlFor="category"
-                className="text-xs font-bold uppercase tracking-wider text-[#274D60] dark:text-[#6BA3BE]"
-              >
+              <Label htmlFor="category" className={labelClass}>
                 Category *
               </Label>
 
@@ -224,23 +284,17 @@ export default function AddBookForm() {
                   onChange={handleChange}
                   className="h-12 w-full appearance-none rounded-2xl border border-[#CCE0E0] bg-white pl-11 pr-4 text-sm font-medium text-[#031716] shadow-sm outline-none transition-all focus:border-[#0C969C] focus:ring-2 focus:ring-[#0C969C]/20 dark:border-[#274D60] dark:bg-[#031716] dark:text-[#F4F8F8]"
                 >
-                  <option value="Fiction">Fiction</option>
-                  <option value="Non-Fiction">Non-Fiction</option>
-                  <option value="Science">Science</option>
-                  <option value="Technology">Technology</option>
-                  <option value="Biography">Biography</option>
-                  <option value="Self-Help">Self-Help</option>
-                  <option value="Fantasy">Fantasy</option>
-                  <option value="History">History</option>
+                  {CATEGORIES.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label
-                htmlFor="totalCopies"
-                className="text-xs font-bold uppercase tracking-wider text-[#274D60] dark:text-[#6BA3BE]"
-              >
+              <Label htmlFor="totalCopies" className={labelClass}>
                 Total Copies *
               </Label>
 
@@ -257,54 +311,50 @@ export default function AddBookForm() {
                   value={formData.totalCopies}
                   onChange={handleChange}
                   required
-                  className="h-12 rounded-2xl border-[#CCE0E0] bg-white pl-11 text-sm text-[#031716] shadow-sm focus-visible:border-[#0C969C] focus-visible:ring-2 focus-visible:ring-[#0C969C]/20 dark:border-[#274D60] dark:bg-[#031716] dark:text-[#F4F8F8]"
+                  className={inputClass}
                 />
               </div>
             </div>
           </div>
 
-          {/* Row 3: Book Cover Image URL */}
+          {/* Row 3: Book Cover Image Upload */}
           <div className="space-y-2">
-            <Label
-              htmlFor="image"
-              className="text-xs font-bold uppercase tracking-wider text-[#274D60] dark:text-[#6BA3BE]"
-            >
-              Book Cover Image URL *
+            <Label htmlFor="image" className={labelClass}>
+              Book Cover Image *
             </Label>
 
             <div className="relative flex items-center">
-              <ImageIcon className="pointer-events-none absolute left-4 h-4 w-4 text-[#0C969C]" />
+              <ImageIcon className="pointer-events-none absolute left-4 z-10 h-4 w-4 text-[#0C969C]" />
 
               <Input
                 id="image"
                 name="image"
-                type="url"
-                placeholder="https://example.com/book-cover.jpg"
-                value={formData.image}
-                onChange={handleChange}
-                required
-                className="h-12 rounded-2xl border-[#CCE0E0] bg-white pl-11 text-sm text-[#031716] shadow-sm focus-visible:border-[#0C969C] focus-visible:ring-2 focus-visible:ring-[#0C969C]/20 dark:border-[#274D60] dark:bg-[#031716] dark:text-[#F4F8F8]"
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className={`${inputClass} cursor-pointer pt-3 file:mr-4 file:cursor-pointer file:rounded-lg file:border-0 file:bg-[#0C969C]/10 file:px-3 file:py-1 file:text-xs file:font-bold file:text-[#0C969C]`}
               />
             </div>
 
-            {formData.image && (
+            <p className="text-xs text-[#274D60] dark:text-[#6BA3BE]">
+              JPG, PNG or WebP. Maximum 5MB.
+            </p>
+
+            {previewUrl && (
               <div className="mt-4 flex items-center gap-4 rounded-2xl border border-[#0C969C]/20 bg-white/70 p-4 backdrop-blur-sm dark:border-[#274D60] dark:bg-[#031716]/60">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={formData.image}
+                  src={previewUrl}
                   alt="Book cover preview"
                   className="h-24 w-18 rounded-xl border border-[#0C969C]/30 object-cover shadow-md"
-                  onError={(e) => {
-                    e.currentTarget.style.display = "none";
-                  }}
                 />
 
-                <div>
+                <div className="min-w-0">
                   <p className="text-xs font-bold uppercase tracking-wider text-[#0C969C]">
-                    Preview Active
+                    Selected Cover
                   </p>
-                  <p className="text-xs text-[#274D60] dark:text-[#6BA3BE]">
-                    Cover loaded successfully.
+                  <p className="truncate text-xs text-[#274D60] dark:text-[#6BA3BE]">
+                    {imageFile?.name}
                   </p>
                 </div>
               </div>
@@ -313,11 +363,8 @@ export default function AddBookForm() {
 
           {/* Row 4: Description */}
           <div className="space-y-2">
-            <Label
-              htmlFor="description"
-              className="text-xs font-bold uppercase tracking-wider text-[#274D60] dark:text-[#6BA3BE]"
-            >
-              Description *
+            <Label htmlFor="description" className={labelClass}>
+              Short Description *
             </Label>
 
             <div className="relative">
@@ -326,7 +373,7 @@ export default function AddBookForm() {
               <Textarea
                 id="description"
                 name="description"
-                placeholder="Write a captivating description about the book..."
+                placeholder="Write a short description about the book..."
                 value={formData.description}
                 onChange={handleChange}
                 rows={4}
@@ -336,33 +383,41 @@ export default function AddBookForm() {
             </div>
           </div>
 
-          {/* Added By Section */}
-          <div className="rounded-2xl border border-[#0C969C]/20 bg-white/80 p-5 backdrop-blur-md dark:border-[#274D60] dark:bg-[#031716]/70">
-            <p className="mb-3 text-xs font-bold uppercase tracking-wider text-[#0C969C]">
-              Logged-In Authorizer
-            </p>
+          {/* Row 5: User Name & Email (read-only) */}
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="userName" className={labelClass}>
+                Your Name
+              </Label>
 
-            {isPending ? (
-              <p className="text-sm text-[#274D60] dark:text-[#6BA3BE]">
-                Loading user information...
-              </p>
-            ) : user ? (
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                <div className="flex items-center gap-2.5 text-sm font-semibold text-[#031716] dark:text-[#F4F8F8]">
-                  <User className="h-4 w-4 text-[#0C969C]" />
-                  {user.name}
-                </div>
+              <div className="relative flex items-center">
+                <User className="pointer-events-none absolute left-4 h-4 w-4 text-[#0C969C]" />
 
-                <div className="flex items-center gap-2.5 text-sm font-medium text-[#274D60] dark:text-[#6BA3BE]">
-                  <Mail className="h-4 w-4 text-[#0C969C]" />
-                  {user.email}
-                </div>
+                <Input
+                  id="userName"
+                  value={isPending ? "Loading..." : user?.name || ""}
+                  readOnly
+                  className={`${inputClass} cursor-not-allowed opacity-80`}
+                />
               </div>
-            ) : (
-              <p className="text-sm font-semibold text-red-500">
-                Please login to add a book.
-              </p>
-            )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="userEmail" className={labelClass}>
+                Your Email
+              </Label>
+
+              <div className="relative flex items-center">
+                <Mail className="pointer-events-none absolute left-4 h-4 w-4 text-[#0C969C]" />
+
+                <Input
+                  id="userEmail"
+                  value={isPending ? "Loading..." : user?.email || ""}
+                  readOnly
+                  className={`${inputClass} cursor-not-allowed opacity-80`}
+                />
+              </div>
+            </div>
           </div>
 
           {/* Submit Button */}
@@ -372,11 +427,14 @@ export default function AddBookForm() {
             className="w-full rounded-2xl bg-linear-to-r from-[#0C969C] to-[#0A7075] py-7 text-sm font-bold uppercase tracking-wider text-white shadow-xl shadow-[#0C969C]/30 transition-all hover:scale-[1.01] hover:shadow-2xl hover:shadow-[#0C969C]/40 active:scale-95 disabled:opacity-50"
           >
             {isSubmitting ? (
-              "Processing..."
+              <>
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                Uploading & Saving...
+              </>
             ) : (
               <>
                 <Plus className="mr-2 h-5 w-5" />
-                Publish Book to Library
+                Add Book
               </>
             )}
           </Button>

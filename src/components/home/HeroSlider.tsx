@@ -6,11 +6,13 @@ import { useState, useSyncExternalStore } from "react";
 import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import type { Swiper as SwiperType } from "swiper";
+
 import {
   Autoplay,
   EffectFade,
   Pagination,
 } from "swiper/modules";
+
 import {
   ArrowRight,
   BookOpen,
@@ -24,9 +26,6 @@ import "swiper/css";
 import "swiper/css/effect-fade";
 import "swiper/css/pagination";
 
-/**
- * Slide configuration data for the BookNook Hero Banner (Single Zooming Image Background).
- */
 const slides = [
   {
     id: 1,
@@ -44,7 +43,7 @@ const slides = [
     title: "Find your",
     highlight: "next read.",
     text: "Browse every title on our shelves and borrow one in a single step with our seamless request system.",
-    button: "Explore Shelves",
+    button: "Browse Books",
     link: "/books",
     icon: Library,
   },
@@ -54,32 +53,38 @@ const slides = [
     title: "Have a book",
     highlight: "to share?",
     text: "Add it to the library and let another reader enjoy it. Keep stories moving across our community.",
-    button: "Share a Book",
-    link: "/add-book",
+    button: "Browse Books",
+    link: "/books",
     icon: BookMarked,
   },
 ];
 
-export default function HeroSlider() {
-  const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
-
-  const mounted = useSyncExternalStore(
-    () => () => {},
+// Server/prerender-e false, browser-e true
+const subscribe = () => () => {};
+const useIsClient = () =>
+  useSyncExternalStore(
+    subscribe,
     () => true,
     () => false
   );
+
+export default function HeroSlider() {
+  const isClient = useIsClient();
+
+  const [swiperInstance, setSwiperInstance] =
+    useState<SwiperType | null>(null);
 
   return (
     <section
       className="relative isolate min-h-[600px] overflow-hidden bg-[#F4F8F8] dark:bg-[#031716] md:min-h-[700px]"
       aria-label="BookNook Featured Hero Banner"
     >
-      {/* Single Background Image with Smooth Zoom-In (Ken Burns) Animation */}
+      {/* Background Image */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <motion.div
-          animate={{ scale: [1, 1.08, 1] }}
+          animate={{ scale: [1, 1.06, 1] }}
           transition={{
-            duration: 12,
+            duration: 15,
             repeat: Infinity,
             ease: "easeInOut",
           }}
@@ -91,26 +96,26 @@ export default function HeroSlider() {
             fill
             priority
             sizes="100vw"
-            quality={95}
             className="object-cover object-center"
           />
         </motion.div>
 
-        {/* Rich Bookstore Dark Overlay for Text Clarity */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#031716]/95 via-[#031716]/75 to-[#031716]/60 dark:from-[#031716]/98 dark:via-[#031716]/85 dark:to-[#031716]/70" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#031716]/95 via-[#031716]/75 to-[#031716]/60" />
       </div>
 
-      {mounted && (
+      {/* Swiper Slider (browser-e mount hole render hobe) */}
+      {isClient ? (
         <Swiper
           modules={[Autoplay, EffectFade, Pagination]}
           effect="fade"
           fadeEffect={{ crossFade: true }}
           loop={true}
-          speed={600} // ফাস্ট ও স্মুথ ট্রানজিশনের জন্য স্পিড কমানো হয়েছে
+          speed={700}
           autoplay={{
-            delay: 3500, // আরও দ্রুত স্লাইড চেঞ্জ হওয়ার জন্য ডিলে কমানো হয়েছে
+            delay: 3000,
             disableOnInteraction: false,
-            pauseOnMouseEnter: true,
+            pauseOnMouseEnter: false,
+            waitForTransition: false,
           }}
           pagination={{
             clickable: true,
@@ -128,15 +133,17 @@ export default function HeroSlider() {
               <SwiperSlide key={slide.id}>
                 {({ isActive }) => (
                   <div className="relative min-h-[600px] w-full overflow-hidden md:min-h-[700px]">
-                    
-                    {/* Centered Content Layout */}
                     <div className="relative z-10 mx-auto flex min-h-[600px] max-w-4xl flex-col items-center justify-center px-6 py-20 text-center md:min-h-[700px]">
-                      
-                      {/* Eyebrow Label */}
+
+                      {/* Subtitle */}
                       <motion.div
                         initial={{ opacity: 0, y: -15 }}
-                        animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: -15 }}
-                        transition={{ duration: 0.4, delay: 0.05 }}
+                        animate={
+                          isActive
+                            ? { opacity: 1, y: 0 }
+                            : { opacity: 0, y: -15 }
+                        }
+                        transition={{ duration: 0.4 }}
                       >
                         <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#0C969C]/40 bg-[#032F30]/90 px-5 py-2.5 text-xs font-bold tracking-[2.5px] text-[#6BA3BE] shadow-xl backdrop-blur-md">
                           <Icon size={16} className="text-[#0C969C]" />
@@ -144,33 +151,46 @@ export default function HeroSlider() {
                         </span>
                       </motion.div>
 
-                      {/* Main Heading with Fast Staggered Rise */}
+                      {/* Heading */}
                       <motion.h1
                         initial={{ opacity: 0, y: 20 }}
-                        animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                        animate={
+                          isActive
+                            ? { opacity: 1, y: 0 }
+                            : { opacity: 0, y: 20 }
+                        }
                         transition={{ duration: 0.5, delay: 0.1 }}
                         className="font-heading text-4xl font-black leading-[1.15] tracking-tight text-[#F4F8F8] sm:text-6xl md:text-7xl"
                       >
                         {slide.title}
-                        <span className="mt-2 block bg-gradient-to-r from-[#0C969C] via-[#6BA3BE] to-[#F4F8F8] bg-clip-text text-transparent pb-1">
+
+                        <span className="mt-2 block bg-linear-to-r from-[#0C969C] via-[#6BA3BE] to-[#F4F8F8] bg-clip-text pb-1 text-transparent">
                           {slide.highlight}
                         </span>
                       </motion.h1>
 
-                      {/* Paragraph */}
+                      {/* Description */}
                       <motion.p
                         initial={{ opacity: 0, y: 15 }}
-                        animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
+                        animate={
+                          isActive
+                            ? { opacity: 1, y: 0 }
+                            : { opacity: 0, y: 15 }
+                        }
                         transition={{ duration: 0.5, delay: 0.15 }}
-                        className="mt-6 max-w-2xl text-base leading-relaxed text-[#6BA3BE]/95 sm:text-lg md:text-xl font-medium"
+                        className="mt-6 max-w-2xl text-base font-medium leading-relaxed text-[#6BA3BE]/95 sm:text-lg md:text-xl"
                       >
                         {slide.text}
                       </motion.p>
 
-                      {/* Action Button */}
+                      {/* Button */}
                       <motion.div
                         initial={{ opacity: 0, y: 15 }}
-                        animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
+                        animate={
+                          isActive
+                            ? { opacity: 1, y: 0 }
+                            : { opacity: 0, y: 15 }
+                        }
                         transition={{ duration: 0.5, delay: 0.2 }}
                         className="mt-10 flex items-center justify-center"
                       >
@@ -179,7 +199,11 @@ export default function HeroSlider() {
                           className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full bg-gradient-to-r from-[#0C969C] to-[#0A7075] px-9 py-4 text-sm font-bold uppercase tracking-wider text-white shadow-2xl shadow-[#0C969C]/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(12,150,156,0.6)] active:scale-95"
                         >
                           <span className="absolute inset-0 rounded-full bg-white/20 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                          <span className="relative z-10">{slide.button}</span>
+
+                          <span className="relative z-10">
+                            {slide.button}
+                          </span>
+
                           <ArrowRight
                             size={18}
                             className="relative z-10 transition-transform duration-300 group-hover:translate-x-1.5"
@@ -188,25 +212,27 @@ export default function HeroSlider() {
                       </motion.div>
 
                     </div>
-
                   </div>
                 )}
               </SwiperSlide>
             );
           })}
         </Swiper>
+      ) : (
+        <div className="min-h-[600px] w-full md:min-h-[700px]" />
       )}
 
-      {/* Slider Controls Bar */}
+      {/* Slider Controls */}
       <div className="pointer-events-none absolute bottom-8 left-1/2 z-20 flex w-full max-w-7xl -translate-x-1/2 items-center justify-between px-6 lg:px-12">
+
         <div className="booknook-hero-pagination pointer-events-auto flex items-center gap-3" />
 
-        <div className="pointer-events-auto hidden items-center gap-3 sm:flex">
+        <div className="pointer-events-auto flex items-center gap-3">
           <button
             type="button"
             onClick={() => swiperInstance?.slidePrev()}
             aria-label="Previous slide"
-            className="flex size-12 items-center justify-center rounded-full border border-[#0C969C]/30 bg-[#032F30]/80 text-[#6BA3BE] shadow-md backdrop-blur-md transition-all hover:bg-[#0C969C] hover:text-white dark:border-[#274D60] dark:bg-[#032F30]/90 dark:text-[#F4F8F8] dark:hover:bg-[#0C969C]"
+            className="flex size-12 items-center justify-center rounded-full border border-[#0C969C]/30 bg-[#032F30]/80 text-[#F4F8F8] shadow-md backdrop-blur-md transition-all hover:bg-[#0C969C]"
           >
             <ChevronLeft size={22} />
           </button>
@@ -215,62 +241,29 @@ export default function HeroSlider() {
             type="button"
             onClick={() => swiperInstance?.slideNext()}
             aria-label="Next slide"
-            className="flex size-12 items-center justify-center rounded-full border border-[#0C969C]/30 bg-[#032F30]/80 text-[#6BA3BE] shadow-md backdrop-blur-md transition-all hover:bg-[#0C969C] hover:text-white dark:border-[#274D60] dark:bg-[#032F30]/90 dark:text-[#F4F8F8] dark:hover:bg-[#0C969C]"
+            className="flex size-12 items-center justify-center rounded-full border border-[#0C969C]/30 bg-[#032F30]/80 text-[#F4F8F8] shadow-md backdrop-blur-md transition-all hover:bg-[#0C969C]"
           >
             <ChevronRight size={22} />
           </button>
         </div>
       </div>
 
-      {/* Custom Swiper Pagination Styling with Fast Progress */}
+      {/* Pagination Styling */}
       <style jsx global>{`
         .booknook-hero-pagination .swiper-pagination-bullet {
           width: 12px;
           height: 12px;
           background: #0C969C;
-          opacity: 0.35;
+          opacity: 0.4;
           border-radius: 50%;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          position: relative;
-          overflow: hidden;
+          transition: all 0.3s ease;
         }
 
         .booknook-hero-pagination .swiper-pagination-bullet-active {
           width: 40px;
           border-radius: 20px;
           opacity: 1;
-          background: #032F30;
-          border: 1px solid rgba(12, 150, 156, 0.4);
-        }
-
-        .booknook-hero-pagination .swiper-pagination-bullet-active::after {
-          content: "";
-          position: absolute;
-          top: 0;
-          left: 0;
-          height: 100%;
-          width: 0%;
           background: linear-gradient(to right, #0C969C, #6BA3BE);
-          border-radius: 20px;
-          animation: swiperProgress 3.5s linear infinite;
-        }
-
-        @keyframes swiperProgress {
-          0% {
-            width: 0%;
-          }
-          100% {
-            width: 100%;
-          }
-        }
-
-        .dark .booknook-hero-pagination .swiper-pagination-bullet {
-          background: #6BA3BE;
-        }
-
-        .dark .booknook-hero-pagination .swiper-pagination-bullet-active {
-          background: #032F30;
-          border-color: rgba(107, 163, 190, 0.4);
         }
       `}</style>
     </section>

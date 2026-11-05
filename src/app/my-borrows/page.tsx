@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+
 import {
   BookOpen,
   CalendarDays,
@@ -12,10 +13,22 @@ import {
   Library,
   AlertCircle,
 } from "lucide-react";
+
 import { toast } from "sonner";
 
 import { authClient } from "@/lib/auth-client";
 import { getToken } from "@/lib/get-token";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface BorrowedBook {
   _id: string;
@@ -36,6 +49,7 @@ export default function MyBorrowsPage() {
   const [borrowedBooks, setBorrowedBooks] = useState<BorrowedBook[]>([]);
   const [loading, setLoading] = useState(true);
   const [returningId, setReturningId] = useState<string | null>(null);
+  const [selectedBookId, setSelectedBookId] = useState<string | null>(null);
   const [error, setError] = useState("");
 
   const user = session?.user;
@@ -54,6 +68,10 @@ export default function MyBorrowsPage() {
     try {
       setLoading(true);
       setError("");
+
+      if (!API_URL) {
+        throw new Error("API URL is not configured.");
+      }
 
       const token = await getToken();
 
@@ -92,15 +110,17 @@ export default function MyBorrowsPage() {
   }, [fetchBorrowedBooks, isPending]);
 
   // Return book
-  const handleReturn = async (id: string) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to return this book?"
-    );
+  const handleReturn = async () => {
+    if (!selectedBookId) return;
 
-    if (!confirmed) return;
+    const id = selectedBookId;
 
     try {
       setReturningId(id);
+
+      if (!API_URL) {
+        throw new Error("API URL is not configured.");
+      }
 
       const token = await getToken();
 
@@ -117,9 +137,12 @@ export default function MyBorrowsPage() {
         throw new Error(data.message || "Failed to return book.");
       }
 
+      // Remove returned book from the current list
       setBorrowedBooks((previous) =>
         previous.filter((book) => book._id !== id)
       );
+
+      setSelectedBookId(null);
 
       toast.success("Book returned successfully!");
     } catch (err) {
@@ -131,6 +154,7 @@ export default function MyBorrowsPage() {
     }
   };
 
+  // Format date
   const formatDate = (date: string) => {
     if (!date) return "Not available";
 
@@ -141,10 +165,12 @@ export default function MyBorrowsPage() {
     });
   };
 
+  // Loading
   if (isPending || loading) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 pt-28">
         <Loader2 className="h-10 w-10 animate-spin text-[#0C969C]" />
+
         <p className="text-sm text-[#537579]">
           Loading your borrowed books...
         </p>
@@ -190,10 +216,12 @@ export default function MyBorrowsPage() {
                 <p className="text-sm font-medium text-[#537579] dark:text-[#A7C5C5]">
                   Currently Borrowed
                 </p>
+
                 <h2 className="mt-2 text-3xl font-black text-[#031716] dark:text-white">
                   {borrowedBooks.length}
                 </h2>
               </div>
+
               <div className="flex size-12 items-center justify-center rounded-xl bg-[#0C969C]/10 text-[#0C969C]">
                 <BookOpen size={24} />
               </div>
@@ -206,10 +234,12 @@ export default function MyBorrowsPage() {
                 <p className="text-sm font-medium text-[#537579] dark:text-[#A7C5C5]">
                   Active Borrowing
                 </p>
+
                 <h2 className="mt-2 text-3xl font-black text-[#031716] dark:text-white">
                   {borrowedBooks.length}
                 </h2>
               </div>
+
               <div className="flex size-12 items-center justify-center rounded-xl bg-[#0C969C]/10 text-[#0C969C]">
                 <Library size={24} />
               </div>
@@ -329,27 +359,70 @@ export default function MyBorrowsPage() {
 
                   {/* Return Button */}
                   <button
-                    onClick={() => handleReturn(book._id)}
+                    type="button"
+                    onClick={() => setSelectedBookId(book._id)}
                     disabled={returningId === book._id}
                     className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#0C969C] px-5 py-3.5 text-sm font-bold text-white shadow-lg shadow-[#0C969C]/20 transition hover:bg-[#087A80] disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    {returningId === book._id ? (
-                      <>
-                        <Loader2 size={18} className="animate-spin" />
-                        Returning...
-                      </>
-                    ) : (
-                      <>
-                        <RotateCcw size={18} />
-                        Return Book
-                      </>
-                    )}
+                    <RotateCcw size={18} />
+                    Return Book
                   </button>
                 </div>
               </div>
             ))}
           </div>
         )}
+
+        {/* Return Confirmation Dialog (Fixed Visibility for Dark/Light Mode) */}
+        <AlertDialog
+          open={!!selectedBookId}
+          onOpenChange={(open) => {
+            if (!open && !returningId) {
+              setSelectedBookId(null);
+            }
+          }}
+        >
+          <AlertDialogContent className="bg-white border border-[#0C969C]/20 dark:bg-[#032F30] dark:border-[#0C969C]/30 text-[#031716] dark:text-[#F4F8F8]">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="text-xl font-bold text-[#031716] dark:text-white">
+                Return Book?
+              </AlertDialogTitle>
+
+              <AlertDialogDescription className="text-[#537579] dark:text-[#A7C5C5]">
+                Are you sure you want to return this book?
+                This action will update your borrowing record and make the book available again.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+
+            <AlertDialogFooter>
+              <AlertDialogCancel
+                disabled={!!returningId}
+                className="bg-gray-100 text-[#031716] hover:bg-gray-200 dark:bg-[#031716] dark:text-[#F4F8F8] dark:hover:bg-[#031716]/80"
+              >
+                Cancel
+              </AlertDialogCancel>
+
+              <AlertDialogAction
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleReturn();
+                }}
+                disabled={!!returningId}
+                className="bg-[#0C969C] text-white hover:bg-[#087A80]"
+              >
+                {returningId ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Returning...
+                  </>
+                ) : (
+                  "Yes, Return Book"
+                )}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
       </div>
     </main>
   );
