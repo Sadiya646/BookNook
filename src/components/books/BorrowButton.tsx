@@ -95,10 +95,13 @@ export default function BorrowButton({ book }: Props) {
       }
 
       if (!token) {
-        throw new Error("Authentication token not found. Please login again.");
+        throw new Error(
+          "Authentication token not found. Please login again."
+        );
       }
 
-      const res = await fetch(`${API_URL}/borrow`, {
+      // Updated API endpoint: POST /borrows
+      const res = await fetch(`${API_URL}/borrows`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

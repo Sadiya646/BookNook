@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
@@ -75,7 +76,7 @@ export default function MyBorrowsPage() {
 
       const token = await getToken();
 
-      const response = await fetch(`${API_URL}/my-borrows`, {
+      const response = await fetch(`${API_URL}/borrows`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -124,8 +125,8 @@ export default function MyBorrowsPage() {
 
       const token = await getToken();
 
-      const response = await fetch(`${API_URL}/return/${id}`, {
-        method: "PATCH",
+      const response = await fetch(`${API_URL}/borrows/${id}`, {
+        method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -373,7 +374,7 @@ export default function MyBorrowsPage() {
           </div>
         )}
 
-        {/* Return Confirmation Dialog (Fixed Visibility for Dark/Light Mode) */}
+        {/* Return Confirmation Dialog */}
         <AlertDialog
           open={!!selectedBookId}
           onOpenChange={(open) => {

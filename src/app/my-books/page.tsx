@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
@@ -175,10 +176,11 @@ export default function MyBooksPage() {
 
       const token = await getToken();
 
+      // Updated API: PATCH /books/:id
       const res = await fetch(
-        `${API_URL}/my-books/${selectedBook._id}`,
+        `${API_URL}/books/${selectedBook._id}`,
         {
-          method: "PUT",
+          method: "PATCH",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -240,8 +242,9 @@ export default function MyBooksPage() {
 
       const token = await getToken();
 
+      // Updated API: DELETE /books/:id
       const res = await fetch(
-        `${API_URL}/my-books/${deletingBook._id}`,
+        `${API_URL}/books/${deletingBook._id}`,
         {
           method: "DELETE",
           headers: {
@@ -519,13 +522,10 @@ export default function MyBooksPage() {
                     className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
                   >
                     <option value="Fiction">Fiction</option>
-                    <option value="Non-Fiction">Non-Fiction</option>
                     <option value="Science">Science</option>
-                    <option value="Technology">Technology</option>
-                    <option value="Biography">Biography</option>
-                    <option value="Self-Help">Self-Help</option>
-                    <option value="Fantasy">Fantasy</option>
                     <option value="History">History</option>
+                    <option value="Kids">Kids</option>
+                    <option value="Others">Others</option>
                   </select>
                 </div>
 

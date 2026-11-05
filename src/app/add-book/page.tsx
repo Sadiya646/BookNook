@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState, type FormEvent, type ChangeEvent } from "react";
@@ -24,7 +25,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
 const CATEGORIES = ["Fiction", "Science", "History", "Kids", "Others"];
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 
 const initialFormData = {
   title: "",
@@ -34,7 +35,6 @@ const initialFormData = {
   description: "",
 };
 
-// Image file imgbb-te upload kore link ferot dey
 async function uploadToImgbb(file: File): Promise<string> {
   const apiKey = process.env.NEXT_PUBLIC_IMGBB_API_KEY;
 
@@ -70,7 +70,6 @@ export default function AddBookForm() {
   const [previewUrl, setPreviewUrl] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Preview URL memory theke clean up kore
   useEffect(() => {
     return () => {
       if (previewUrl) URL.revokeObjectURL(previewUrl);
@@ -142,10 +141,10 @@ export default function AddBookForm() {
     setIsSubmitting(true);
 
     try {
-      // 1. Image imgbb-te upload
+      // 1. Upload image to imgbb
       const imageUrl = await uploadToImgbb(imageFile);
 
-      // 2. JWT token
+      // 2. Get JWT token
       const token = await getToken();
 
       const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -154,9 +153,9 @@ export default function AddBookForm() {
         throw new Error("API URL is not configured.");
       }
 
-      // 3. Book data backend-e pathao
-      // Spec onujayi route: POST /books (backend-e rename korle ekhane-o "/books" koro)
-      const res = await fetch(`${API_URL}/add-book`, {
+      // 3. Send book data to backend
+      // Updated API endpoint: POST /books
+      const res = await fetch(`${API_URL}/books`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -224,7 +223,7 @@ export default function AddBookForm() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
 
-          {/* Row 1: Title & Author */}
+          {/* Title & Author */}
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="title" className={labelClass}>
@@ -233,7 +232,6 @@ export default function AddBookForm() {
 
               <div className="relative flex items-center">
                 <BookOpen className="pointer-events-none absolute left-4 h-4 w-4 text-[#0C969C]" />
-
                 <Input
                   id="title"
                   name="title"
@@ -253,7 +251,6 @@ export default function AddBookForm() {
 
               <div className="relative flex items-center">
                 <User className="pointer-events-none absolute left-4 h-4 w-4 text-[#0C969C]" />
-
                 <Input
                   id="author"
                   name="author"
@@ -267,7 +264,7 @@ export default function AddBookForm() {
             </div>
           </div>
 
-          {/* Row 2: Category & Total Copies */}
+          {/* Category & Total Copies */}
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="category" className={labelClass}>
@@ -300,7 +297,6 @@ export default function AddBookForm() {
 
               <div className="relative flex items-center">
                 <Hash className="pointer-events-none absolute left-4 h-4 w-4 text-[#0C969C]" />
-
                 <Input
                   id="totalCopies"
                   name="totalCopies"
@@ -317,7 +313,7 @@ export default function AddBookForm() {
             </div>
           </div>
 
-          {/* Row 3: Book Cover Image Upload */}
+          {/* Book Cover Image */}
           <div className="space-y-2">
             <Label htmlFor="image" className={labelClass}>
               Book Cover Image *
@@ -325,7 +321,6 @@ export default function AddBookForm() {
 
             <div className="relative flex items-center">
               <ImageIcon className="pointer-events-none absolute left-4 z-10 h-4 w-4 text-[#0C969C]" />
-
               <Input
                 id="image"
                 name="image"
@@ -361,7 +356,7 @@ export default function AddBookForm() {
             )}
           </div>
 
-          {/* Row 4: Description */}
+          {/* Description */}
           <div className="space-y-2">
             <Label htmlFor="description" className={labelClass}>
               Short Description *
@@ -369,7 +364,6 @@ export default function AddBookForm() {
 
             <div className="relative">
               <FileText className="pointer-events-none absolute left-4 top-4 h-4 w-4 text-[#0C969C]" />
-
               <Textarea
                 id="description"
                 name="description"
@@ -383,7 +377,7 @@ export default function AddBookForm() {
             </div>
           </div>
 
-          {/* Row 5: User Name & Email (read-only) */}
+          {/* User Name & Email */}
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="userName" className={labelClass}>
@@ -392,7 +386,6 @@ export default function AddBookForm() {
 
               <div className="relative flex items-center">
                 <User className="pointer-events-none absolute left-4 h-4 w-4 text-[#0C969C]" />
-
                 <Input
                   id="userName"
                   value={isPending ? "Loading..." : user?.name || ""}
@@ -409,7 +402,6 @@ export default function AddBookForm() {
 
               <div className="relative flex items-center">
                 <Mail className="pointer-events-none absolute left-4 h-4 w-4 text-[#0C969C]" />
-
                 <Input
                   id="userEmail"
                   value={isPending ? "Loading..." : user?.email || ""}
